@@ -31,6 +31,7 @@ function extrachill_chat_init() {
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatCoreDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatSystemPromptDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatUserContextDirective.php';
+	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/MultisiteSiteContextWrapper.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/authentication.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/conversation-loop.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ajax-handler.php';

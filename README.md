@@ -5,7 +5,8 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 ## Features
 
 - **Multi-Turn Conversation Loop** - Chained tool usage (search → read → analyze → respond)
-- **Three-Layer AI Directive System** - Core platform context, custom prompts, user identity
+- **Four-Layer AI Directive System** - Core platform context, custom prompts, user identity, site context
+- **Network Topology Context** - Comprehensive multisite network metadata via dm-multisite integration
 - **Tool Integration** - Google search, web fetch, network-wide content search, post reading
 - **Conversation History** - 20-message window stored per user
 - **Network-Wide Authentication** - Any logged-in multisite user can access
@@ -18,6 +19,9 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 - PHP 7.4+
 - [extrachill-ai-client](https://github.com/Extra-Chill/extrachill-ai-client) plugin (network-activated)
 - [extrachill](https://github.com/Extra-Chill/extrachill) theme
+
+### Optional
+- [dm-multisite](https://github.com/Extra-Chill/dm-multisite) plugin (network-activated) - Provides AI tools and site context directive
 
 ## Installation
 
@@ -34,10 +38,11 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 - Site-activated on chat.extrachill.com only
 - Network-wide multisite authentication
 
-### Three-Layer Directive System
+### Four-Layer Directive System
 1. **Priority 10: ChatCoreDirective** - Agent identity and platform architecture
 2. **Priority 20: ChatSystemPromptDirective** - User-customizable system prompt
 3. **Priority 30: ChatUserContextDirective** - User identity and membership status
+4. **Priority 40: MultisiteSiteContextDirective** - Network topology and site metadata (via dm-multisite)
 
 ### Conversation Loop
 - Hardcoded to OpenAI gpt-5-mini model

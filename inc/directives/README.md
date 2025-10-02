@@ -4,12 +4,13 @@ This directory contains AI directive classes that inject system messages into AI
 
 ## Directive Priority System
 
-Directives run in priority order (lowest first) before the main AI request executes at priority 50:
+Directives run in priority order (lowest first) before the main AI request executes at priority 99:
 
 - **Priority 10**: `ChatCoreDirective` - Establishes agent identity and HTML formatting requirement
 - **Priority 20**: `ChatSystemPromptDirective` - Injects user's custom system prompt from settings
-- **Priority 30**: `MultisiteSiteContextDirective` - From dm-multisite plugin (if active) - provides site context
-- **Priority 50**: Main `ai_request` filter executes the actual API call
+- **Priority 30**: `ChatUserContextDirective` - Injects current user identity and membership status
+- **Priority 40**: `MultisiteSiteContextDirective` - From dm-multisite plugin (if active) - provides network context
+- **Priority 99**: Main `ai_request` filter executes the actual API call via ai-http-client
 
 ## What Are Directives?
 
@@ -22,13 +23,20 @@ Directives are system messages that provide foundational context to the AI befor
 
 ## Integration with dm-multisite
 
-When the dm-multisite plugin is active and network-activated, its `MultisiteSiteContextDirective` runs at priority 30, providing the AI with:
+When the dm-multisite plugin is active and network-activated, extrachill-chat hooks its `MultisiteSiteContextDirective` to the `ai_request` filter at priority 40 via the `MultisiteSiteContextWrapper.php` file.
+
+This provides the AI with comprehensive network context:
 - Current site context (site name, URL, blog ID)
 - Network topology information (all 6 sites in the Extra Chill network)
-- Cross-site data access patterns
-- Available multisite tools
+- Available post types and taxonomies per site
+- Cross-site data access patterns via JSON-formatted metadata
 
-This allows the chat agent to understand which site the user is on and intelligently access data across the entire network using the `local_search` and `wordpress_post_reader` tools.
+The wrapper pattern allows extrachill-chat to:
+- Use dm-multisite's directive without requiring Data Machine installation
+- Gracefully degrade if dm-multisite is not network-activated
+- Maintain clean separation between plugins while sharing context
+
+This enables the chat agent to understand which site the user is on and intelligently access data across the entire network using the `local_search` and `wordpress_post_reader` tools.
 
 ## Directive Execution Flow
 
@@ -44,13 +52,19 @@ Priority 20: ChatSystemPromptDirective injects
     - User's custom system prompt from settings (optional)
     - Allows site admin to customize behavior
     ↓
-Priority 30: MultisiteSiteContextDirective injects (if dm-multisite active)
-    - Current site: chat.extrachill.com
-    - Available sites in network
-    - Multisite tool availability
+Priority 30: ChatUserContextDirective injects
+    - Current user display name and username
+    - User's role on current site
+    - Team member status, artist profiles, community membership
     ↓
-Priority 50: Main ai_request filter
-    - Sends complete message stack to AI provider
+Priority 40: MultisiteSiteContextDirective injects (if dm-multisite active)
+    - Current site: chat.extrachill.com
+    - All 6 network sites with URLs and metadata
+    - Post types and taxonomies per site
+    - JSON-formatted network topology
+    ↓
+Priority 99: ai-http-client executes request
+    - Sends complete message stack to AI provider (OpenAI)
     - Returns formatted HTML response
 ```
 
@@ -85,8 +99,9 @@ To create a new directive:
 4. **Choose priority** based on purpose:
    - **1-10**: Core identity and foundational requirements
    - **11-20**: User customizations and preferences
-   - **21-40**: Context and environment information
-   - **41-49**: Final modifications before execution
+   - **21-40**: Context and environment information (user context at 30, site context at 40)
+   - **41-98**: Final modifications before execution
+   - **99**: Reserved for ai-http-client actual API execution
 
 ## Why HTML Formatting Requirement?
 
@@ -119,3 +134,20 @@ The JavaScript simply uses `.html()` to render the AI's response directly, trust
 - Loads custom prompt from: `get_option('extrachill_chat_system_prompt')`
 - Only injects if user has configured a custom prompt
 - Allows site admin to customize agent behavior without modifying core code
+
+### ChatUserContextDirective (Priority 30)
+- Current user display name and username
+- User's role on current site
+- Team member status (via extrachill-multisite `ec_is_team_member()`)
+- Artist profiles count (via extrachill-artist-platform `ec_get_user_artist_ids()`)
+- Community membership (via WordPress native multisite functions)
+- Graceful degradation: Uses `function_exists()` checks for optional plugin integrations
+
+### MultisiteSiteContextDirective (Priority 40)
+- Provided by dm-multisite plugin, hooked via `MultisiteSiteContextWrapper.php`
+- Current site metadata (blog ID, name, URL)
+- All 6 Extra Chill network sites with complete metadata
+- Post types and taxonomies available on each site
+- JSON-formatted network topology for structured AI understanding
+- Only active when dm-multisite is network-activated
+- Enables AI to intelligently navigate and search across entire multisite network
