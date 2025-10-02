@@ -1,0 +1,308 @@
+/**
+ * ExtraChill Chat CSS
+ * ChatGPT-style interface using ExtraChill CSS variables
+ */
+
+#ec-chat-messages {
+	min-height: 500px;
+	max-height: 600px;
+	overflow-y: auto;
+	margin-bottom: 20px;
+	padding: 20px;
+	background-color: var(--background-color);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+}
+
+.ec-chat-message {
+	margin-bottom: 20px;
+	display: flex;
+	animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.ec-user-message {
+	justify-content: flex-end;
+}
+
+.ec-assistant-message {
+	justify-content: flex-start;
+}
+
+.ec-message-content {
+	max-width: 70%;
+	padding: 12px 16px;
+	border-radius: 12px;
+	line-height: 1.6;
+}
+
+.ec-user-message .ec-message-content {
+	background-color: var(--button-bg);
+	color: #fff;
+	border-bottom-right-radius: 4px;
+}
+
+.ec-assistant-message .ec-message-content {
+	background-color: var(--card-background);
+	color: var(--text-color);
+	border-bottom-left-radius: 4px;
+}
+
+/* HTML element styling for AI-generated content */
+.ec-assistant-message .ec-message-content p {
+	margin: 0 0 12px 0;
+}
+
+.ec-assistant-message .ec-message-content p:last-child {
+	margin-bottom: 0;
+}
+
+.ec-assistant-message .ec-message-content ul,
+.ec-assistant-message .ec-message-content ol {
+	margin: 0 0 12px 0;
+	padding-left: 24px;
+}
+
+.ec-assistant-message .ec-message-content li {
+	margin-bottom: 6px;
+}
+
+.ec-assistant-message .ec-message-content a {
+	color: var(--link-color);
+	text-decoration: underline;
+	transition: opacity 0.2s ease;
+}
+
+.ec-assistant-message .ec-message-content a:hover {
+	opacity: 0.8;
+}
+
+.ec-assistant-message .ec-message-content strong {
+	font-weight: 600;
+}
+
+.ec-assistant-message .ec-message-content em {
+	font-style: italic;
+}
+
+.ec-assistant-message .ec-message-content code {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: 'Courier New', monospace;
+	font-size: 0.9em;
+}
+
+.ec-assistant-message .ec-message-content pre {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 12px;
+	border-radius: 6px;
+	overflow-x: auto;
+	margin: 0 0 12px 0;
+}
+
+.ec-assistant-message .ec-message-content pre code {
+	background-color: transparent;
+	padding: 0;
+}
+
+/* User message paragraphs */
+.ec-user-message .ec-message-content p {
+	margin: 0;
+}
+
+.ec-user-message .ec-message-content p + p {
+	margin-top: 12px;
+}
+
+#ec-chat-input-container {
+	display: flex;
+	gap: 12px;
+	align-items: baseline;
+}
+
+#ec-chat-input {
+	flex: 1;
+	padding: 12px 16px;
+	border: 2px solid var(--border-color);
+	border-radius: 8px;
+	font-size: 16px;
+	font-family: inherit;
+	resize: none;
+	min-height: 50px;
+	max-height: 150px;
+	background-color: var(--background-color);
+	color: var(--text-color);
+	transition: border-color 0.2s ease;
+}
+
+#ec-chat-input:focus {
+	outline: none;
+	border-color: var(--focus-border-color);
+	box-shadow: var(--focus-box-shadow);
+}
+
+#ec-chat-send {
+	padding: 12px 24px;
+	background-color: var(--button-bg);
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	white-space: nowrap;
+}
+
+#ec-chat-send:hover {
+	background-color: var(--button-hover-bg);
+}
+
+#ec-chat-send:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+#ec-chat-loading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px;
+	color: var(--muted-text);
+	font-size: 14px;
+}
+
+.ec-loading-spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid var(--border-color);
+	border-top-color: var(--button-bg);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Welcome Placeholder */
+.ec-chat-placeholder {
+	text-align: center;
+	color: var(--muted-text);
+	font-size: 18px;
+	padding: 60px 20px;
+	line-height: 1.6;
+}
+
+/* Typing Indicator */
+.ec-typing-indicator .ec-message-content {
+	padding: 12px 20px;
+}
+
+.ec-typing-dots {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.ec-typing-dots span {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	background-color: var(--text-color);
+	border-radius: 50%;
+	opacity: 0.4;
+	animation: typingDot 1.4s infinite;
+}
+
+.ec-typing-dots span:nth-child(1) {
+	animation-delay: 0s;
+}
+
+.ec-typing-dots span:nth-child(2) {
+	animation-delay: 0.2s;
+}
+
+.ec-typing-dots span:nth-child(3) {
+	animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+	0%, 60%, 100% {
+		opacity: 0.4;
+		transform: scale(1);
+	}
+	30% {
+		opacity: 1;
+		transform: scale(1.2);
+	}
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+	#ec-chat-container {
+		padding: 0 16px;
+		margin: 20px auto;
+	}
+
+	#ec-chat-messages {
+		min-height: 400px;
+		max-height: 500px;
+		padding: 16px;
+	}
+
+	.ec-message-content {
+		max-width: 85%;
+	}
+
+	#ec-chat-input {
+		font-size: 16px; /* Prevent iOS zoom on focus */
+	}
+
+	#ec-chat-send {
+		padding: 12px 20px;
+	}
+}
+
+/* Tool Calls Info */
+.ec-tool-calls-info {
+	margin-bottom: 16px;
+	padding: 12px 16px;
+	background-color: rgba(0, 0, 0, 0.05);
+	border-left: 3px solid var(--button-bg);
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+.ec-tool-call {
+	margin-bottom: 6px;
+	color: var(--muted-text);
+}
+
+.ec-tool-call:last-child {
+	margin-bottom: 0;
+}
+
+.ec-tool-call code {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: 'Courier New', monospace;
+	font-size: 0.9em;
+	color: var(--text-color);
+}
+
+/* Dark mode adjustments are handled via CSS variables in root.css */
