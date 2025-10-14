@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Extra Chill Chat
  * Plugin URI: https://extrachill.com
- * Description: Simple AI chatbot for chat.extrachill.com with network-wide authentication
+ * Description: AI chatbot for chat.extrachill.com with conversation history and tool calling
  * Version: 1.0.0
  * Author: Chris Huber
  * Author URI: https://chubes.net
