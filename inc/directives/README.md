@@ -36,7 +36,7 @@ The wrapper pattern allows extrachill-chat to:
 - Gracefully degrade if dm-multisite is not network-activated
 - Maintain clean separation between plugins while sharing context
 
-This enables the chat agent to understand which site the user is on and intelligently access data across the entire network using the `local_search` and `wordpress_post_reader` tools.
+This enables the chat agent to understand which site the user is on and intelligently access data across the entire network using the `search_extrachill` and `wordpress_post_reader` tools.
 
 ## Directive Execution Flow
 

@@ -27,12 +27,13 @@ add_action( 'plugins_loaded', 'extrachill_chat_init' );
 
 function extrachill_chat_init() {
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/chat-history.php';
-	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/tools/dm-tools.php';
+	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/tools/chat-tools.php';
+	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/tools/artist-platform/add-link-to-page.php';
+	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/tools/search-extrachill.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatCoreDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatSystemPromptDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatUserContextDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/MultisiteSiteContextWrapper.php';
-	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/authentication.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/conversation-loop.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ajax-handler.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ai-integration.php';

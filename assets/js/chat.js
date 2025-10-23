@@ -128,10 +128,11 @@
 
 		addToolCallsInfo: function(toolCalls) {
 			const toolNames = {
-				'local_search': 'Searched Extra Chill network',
+				'search_extrachill': 'Searched Extra Chill network',
 				'google_search': 'Searched Google',
 				'webfetch': 'Fetched web content',
-				'wordpress_post_reader': 'Read post content'
+				'wordpress_post_reader': 'Read post content',
+				'add_link_to_page': 'Added link to artist page'
 			};
 
 			const $toolInfo = $('<div>')

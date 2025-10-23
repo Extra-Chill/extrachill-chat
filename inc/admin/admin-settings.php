@@ -1,7 +1,7 @@
 <?php
 /**
  * Site-level admin menu for configuring system prompt.
- * Provider and model hardcoded in conversation-loop.php (OpenAI gpt-5-mini).
+ * Provider (openai) and model (gpt-5-mini) are hardcoded in conversation-loop.php line 38.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

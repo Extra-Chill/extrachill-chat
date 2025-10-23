@@ -50,11 +50,12 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 - Executes tools and passes results back to AI until final text response
 
 ### Tool Integration
-Discovers AI tools from [dm-multisite](https://github.com/Extra-Chill/dm-multisite) via `dm_ai_tools_multisite` filter:
-- `google_search` - Search Google for external information
-- `webfetch` - Fetch and extract content from web pages
-- `local_search` - Search ALL Extra Chill network sites
-- `wordpress_post_reader` - Read full posts from any site
+Provides native ExtraChill search tool and discovers additional tools from plugins:
+- `search_extrachill` - Native multisite search with superior relevance scoring (via `ec_chat_tools` filter)
+- `google_search` - Search Google for external information (via dm-multisite)
+- `webfetch` - Fetch and extract content from web pages (via dm-multisite)
+- `wordpress_post_reader` - Read full posts from any site (via dm-multisite)
+- `add_link_to_page` - Add links to artist link pages (via `ec_chat_tools` filter)
 
 ## Development
 

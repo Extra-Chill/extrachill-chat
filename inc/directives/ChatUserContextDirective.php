@@ -130,13 +130,7 @@ class ChatUserContextDirective {
 	 * @return bool|null True if community member, false if not, null if site not found
 	 */
 	private static function check_community_member_status( $user_id ) {
-		$community_blog_id = get_blog_id_from_url( 'community.extrachill.com', '/' );
-
-		if ( ! $community_blog_id ) {
-			return null;
-		}
-
-		return is_user_member_of_blog( $user_id, $community_blog_id );
+		return is_user_member_of_blog( $user_id, 2 );
 	}
 }
 

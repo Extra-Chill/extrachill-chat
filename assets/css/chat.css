@@ -80,11 +80,6 @@
 .ec-assistant-message .ec-message-content a {
 	color: var(--link-color);
 	text-decoration: underline;
-	transition: opacity 0.2s ease;
-}
-
-.ec-assistant-message .ec-message-content a:hover {
-	opacity: 0.8;
 }
 
 .ec-assistant-message .ec-message-content strong {

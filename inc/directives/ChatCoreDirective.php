@@ -58,7 +58,7 @@ class ChatCoreDirective {
 		$directive .= "CRITICAL: You have function tools available. When users ask you to find, search, or read content, USE your tools.\n";
 		$directive .= "Do NOT generate HTML forms, buttons, or links that pretend to be tools.\n";
 		$directive .= "Do NOT describe what tools you could use - just USE them.\n";
-		$directive .= "Your local_search tool searches ALL network sites simultaneously - use it for any content search request.\n\n";
+		$directive .= "Your search_extrachill tool searches ALL network sites simultaneously - use it for any content search request.\n\n";
 
 		$directive .= "RESPONSE FORMAT REQUIREMENTS:\n";
 		$directive .= "CRITICAL: Always return your responses formatted as clean, semantic HTML.\n\n";
