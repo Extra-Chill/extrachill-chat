@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 get_header();
+
+extrachill_breadcrumbs();
 ?>
 
 <div class="full-width-breakout">

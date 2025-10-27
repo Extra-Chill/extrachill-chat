@@ -39,6 +39,7 @@ function extrachill_chat_init() {
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ai-integration.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/assets.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/chat-hooks.php';
+	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/breadcrumbs.php';
 
 	if ( is_admin() ) {
 		require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/admin/admin-settings.php';
