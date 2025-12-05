@@ -32,10 +32,13 @@ class ChatSystemPromptDirective {
 			return $request;
 		}
 
-		array_push( $request['messages'], array(
-			'role'    => 'system',
-			'content' => $custom_prompt
-		) );
+		array_push(
+			$request['messages'],
+			array(
+				'role'    => 'system',
+				'content' => $custom_prompt,
+			)
+		);
 
 		return $request;
 	}

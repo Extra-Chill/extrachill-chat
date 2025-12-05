@@ -36,13 +36,13 @@ function ec_chat_send_ai_message( $user_message, $chat_post_id = 0 ) {
 	$messages = array();
 
 	if ( $chat_post_id ) {
-		$history = ec_chat_get_messages( $chat_post_id );
+		$history        = ec_chat_get_messages( $chat_post_id );
 		$recent_history = array_slice( $history, -20 );
 
 		foreach ( $recent_history as $msg ) {
 			$message = array(
 				'role'    => $msg['role'],
-				'content' => $msg['content']
+				'content' => $msg['content'],
 			);
 
 			if ( isset( $msg['tool_calls'] ) ) {
@@ -59,7 +59,7 @@ function ec_chat_send_ai_message( $user_message, $chat_post_id = 0 ) {
 
 	$messages[] = array(
 		'role'    => 'user',
-		'content' => $user_message
+		'content' => $user_message,
 	);
 
 	$tools = ec_chat_get_available_tools();

@@ -30,7 +30,7 @@ function ec_chat_register_settings() {
 		array(
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_textarea_field',
-			'default'           => ''
+			'default'           => '',
 		)
 	);
 

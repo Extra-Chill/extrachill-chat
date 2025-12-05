@@ -31,10 +31,13 @@ class ChatUserContextDirective {
 			return $request;
 		}
 
-		array_push( $request['messages'], array(
-			'role'    => 'system',
-			'content' => $directive
-		) );
+		array_push(
+			$request['messages'],
+			array(
+				'role'    => 'system',
+				'content' => $directive,
+			)
+		);
 
 		return $request;
 	}
@@ -51,28 +54,28 @@ class ChatUserContextDirective {
 			return '';
 		}
 
-		$directive = "USER CONTEXT:\n";
-		$directive .= "- Display Name: " . $user->display_name . "\n";
-		$directive .= "- Username: @" . $user->user_login . "\n";
+		$directive  = "USER CONTEXT:\n";
+		$directive .= '- Display Name: ' . $user->display_name . "\n";
+		$directive .= '- Username: @' . $user->user_login . "\n";
 
 		$role = self::get_user_role( $user );
 		if ( $role ) {
-			$directive .= "- Current Site Role: " . ucfirst( $role ) . "\n";
+			$directive .= '- Current Site Role: ' . ucfirst( $role ) . "\n";
 		}
 
 		$is_team = self::check_team_member_status( $user->ID );
 		if ( $is_team !== null ) {
-			$directive .= "- Team Member: " . ( $is_team ? 'Yes' : 'No' ) . "\n";
+			$directive .= '- Team Member: ' . ( $is_team ? 'Yes' : 'No' ) . "\n";
 		}
 
 		$artist_status = self::check_artist_status( $user->ID );
 		if ( $artist_status ) {
-			$directive .= "- Artist: " . $artist_status . "\n";
+			$directive .= '- Artist: ' . $artist_status . "\n";
 		}
 
 		$is_community = self::check_community_member_status( $user->ID );
 		if ( $is_community !== null ) {
-			$directive .= "- Community Member: " . ( $is_community ? 'Yes' : 'No' ) . "\n";
+			$directive .= '- Community Member: ' . ( $is_community ? 'Yes' : 'No' ) . "\n";
 		}
 
 		return trim( $directive );

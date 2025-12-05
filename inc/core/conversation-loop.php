@@ -29,14 +29,14 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 	}
 
 	$all_tool_calls = array();
-	$iteration = 0;
+	$iteration      = 0;
 
 	while ( $iteration < $max_iterations ) {
-		$iteration++;
+		++$iteration;
 
 		$request_data = array(
 			'messages' => $messages,
-			'model'    => 'gpt-5-mini'
+			'model'    => 'gpt-5-mini',
 		);
 
 		$response = apply_filters( 'chubes_ai_request', $request_data, 'openai', null, $tools );
@@ -56,15 +56,15 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 			return array(
 				'content'    => $response['data']['content'],
 				'tool_calls' => $all_tool_calls,
-				'messages'   => $messages
+				'messages'   => $messages,
 			);
 		}
 
 		$tool_calls = $response['data']['tool_calls'];
 
 		$assistant_message = array(
-			'role' => 'assistant',
-			'content' => null
+			'role'    => 'assistant',
+			'content' => null,
 		);
 
 		if ( ! empty( $tool_calls ) ) {
@@ -79,7 +79,7 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 
 			$all_tool_calls[] = array(
 				'tool'       => $tool_id,
-				'parameters' => $parameters
+				'parameters' => $parameters,
 			);
 
 			if ( ! $ec_chat_tools || ! $ec_chat_tools->has_tool( $tool_id ) ) {
@@ -95,7 +95,7 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 			$messages[] = array(
 				'role'         => 'tool',
 				'tool_call_id' => $tool_call['id'] ?? $tool_id,
-				'content'      => wp_json_encode( $result )
+				'content'      => wp_json_encode( $result ),
 			);
 		}
 	}

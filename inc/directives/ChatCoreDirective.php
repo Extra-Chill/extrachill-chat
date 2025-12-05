@@ -27,10 +27,13 @@ class ChatCoreDirective {
 
 		$directive = self::generate_core_directive();
 
-		array_push( $request['messages'], array(
-			'role'    => 'system',
-			'content' => $directive
-		) );
+		array_push(
+			$request['messages'],
+			array(
+				'role'    => 'system',
+				'content' => $directive,
+			)
+		);
 
 		return $request;
 	}

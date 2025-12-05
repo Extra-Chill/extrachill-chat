@@ -29,21 +29,21 @@ function ec_chat_register_add_link_tool( $tools ) {
 				'properties' => array(
 					'link_text' => array(
 						'type'        => 'string',
-						'description' => 'Text to display on the button (e.g., "Pre-save my new single", "Listen on Spotify", "Buy tickets")'
+						'description' => 'Text to display on the button (e.g., "Pre-save my new single", "Listen on Spotify", "Buy tickets")',
 					),
 					'link_url'  => array(
 						'type'        => 'string',
-						'description' => 'Full URL where the button should link to (must include http:// or https://)'
+						'description' => 'Full URL where the button should link to (must include http:// or https://)',
 					),
 					'position'  => array(
 						'type'        => 'integer',
-						'description' => 'Position in the list (1-based). Use 1 for first position, 3 for third position, etc. Omit this parameter to add the link to the end of the list.'
-					)
+						'description' => 'Position in the list (1-based). Use 1 for first position, 3 for third position, etc. Omit this parameter to add the link to the end of the list.',
+					),
 				),
-				'required'   => array( 'link_text', 'link_url' )
-			)
+				'required'   => array( 'link_text', 'link_url' ),
+			),
 		),
-		'callback' => 'ec_chat_tool_add_link'
+		'callback' => 'ec_chat_tool_add_link',
 	);
 
 	return $tools;
@@ -66,7 +66,7 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 	// Check if users plugin function exists (network-activated)
 	if ( ! function_exists( 'ec_get_artists_for_user' ) ) {
 		return array(
-			'error' => 'User artist functions are not available. The extrachill-users plugin must be network-activated.'
+			'error' => 'User artist functions are not available. The extrachill-users plugin must be network-activated.',
 		);
 	}
 
@@ -76,7 +76,7 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 	if ( empty( $artist_ids ) ) {
 		return array(
 			'error'      => 'You don\'t have any artist profiles yet.',
-			'suggestion' => 'Create an artist profile at artist.extrachill.com to get started with your link page.'
+			'suggestion' => 'Create an artist profile at artist.extrachill.com to get started with your link page.',
 		);
 	}
 
@@ -89,7 +89,7 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 		// Check if artist platform functions exist on artist site
 		if ( ! function_exists( 'ec_get_link_page_for_artist' ) ) {
 			return array(
-				'error' => 'Link page system is not available on artist platform.'
+				'error' => 'Link page system is not available on artist platform.',
 			);
 		}
 
@@ -99,15 +99,15 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 		if ( ! $link_page_id ) {
 			return array(
 				'error'      => 'No link page found for your artist profile.',
-				'suggestion' => 'Link pages are created automatically when you set up your artist profile.'
+				'suggestion' => 'Link pages are created automatically when you set up your artist profile.',
 			);
 		}
 
 		// Prepare link data
 		$link_data = array(
-			'link_text'    => $parameters['link_text'],
-			'link_url'     => $parameters['link_url'],
-			'section_index' => 0 // Always add to first section
+			'link_text'     => $parameters['link_text'],
+			'link_url'      => $parameters['link_url'],
+			'section_index' => 0, // Always add to first section
 		);
 
 		// Convert 1-based position to 0-based array index if provided
@@ -118,13 +118,18 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 		// Call the artist platform action
 		// Action handles all validation, permissions, and saving
 		$result = null;
-		add_action( 'ec_artist_add_link', function( $lp_id, $data, $uid ) use ( &$result ) {
-			if ( function_exists( 'ec_action_artist_add_link' ) ) {
-				$result = ec_action_artist_add_link( $lp_id, $data, $uid );
-			} else {
-				$result = new WP_Error( 'function_missing', 'Artist platform add link function not available.' );
-			}
-		}, 10, 3 );
+		add_action(
+			'ec_artist_add_link',
+			function ( $lp_id, $data, $uid ) use ( &$result ) {
+				if ( function_exists( 'ec_action_artist_add_link' ) ) {
+					$result = ec_action_artist_add_link( $lp_id, $data, $uid );
+				} else {
+					$result = new WP_Error( 'function_missing', 'Artist platform add link function not available.' );
+				}
+			},
+			10,
+			3
+		);
 
 		do_action( 'ec_artist_add_link', $link_page_id, $link_data, $user_id );
 
@@ -132,7 +137,7 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 		if ( is_wp_error( $result ) ) {
 			return array(
 				'error'      => $result->get_error_message(),
-				'error_code' => $result->get_error_code()
+				'error_code' => $result->get_error_code(),
 			);
 		}
 
@@ -152,7 +157,7 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 			),
 			'link_page_url' => $link_page_url,
 			'link_id'       => $result['link_id'] ?? null,
-			'position'      => isset( $result['position'] ) ? $result['position'] + 1 : null
+			'position'      => isset( $result['position'] ) ? $result['position'] + 1 : null,
 		);
 
 	} finally {

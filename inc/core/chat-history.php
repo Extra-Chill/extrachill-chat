@@ -10,34 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'init', 'ec_chat_register_post_type' );
 
 function ec_chat_register_post_type() {
-	register_post_type( 'ec_chat', array(
-		'labels' => array(
-			'name'               => __( 'Chats', 'extrachill-chat' ),
-			'singular_name'      => __( 'Chat', 'extrachill-chat' ),
-			'add_new'            => __( 'Add New', 'extrachill-chat' ),
-			'add_new_item'       => __( 'Add New Chat', 'extrachill-chat' ),
-			'edit_item'          => __( 'Edit Chat', 'extrachill-chat' ),
-			'new_item'           => __( 'New Chat', 'extrachill-chat' ),
-			'view_item'          => __( 'View Chat', 'extrachill-chat' ),
-			'search_items'       => __( 'Search Chats', 'extrachill-chat' ),
-			'not_found'          => __( 'No chats found', 'extrachill-chat' ),
-			'not_found_in_trash' => __( 'No chats found in trash', 'extrachill-chat' ),
-		),
-		'public'              => false,
-		'show_ui'             => true,
-		'show_in_menu'        => true,
-		'supports'            => array( 'title', 'author' ),
-		'capability_type'     => 'post',
-		'hierarchical'        => false,
-		'menu_position'       => 25,
-		'menu_icon'           => 'dashicons-format-chat',
-		'show_in_rest'        => false,
-		'publicly_queryable'  => false,
-		'exclude_from_search' => true,
-		'show_in_nav_menus'   => false,
-		'show_in_admin_bar'   => false,
-		'can_export'          => true,
-	) );
+	register_post_type(
+		'ec_chat',
+		array(
+			'labels'              => array(
+				'name'               => __( 'Chats', 'extrachill-chat' ),
+				'singular_name'      => __( 'Chat', 'extrachill-chat' ),
+				'add_new'            => __( 'Add New', 'extrachill-chat' ),
+				'add_new_item'       => __( 'Add New Chat', 'extrachill-chat' ),
+				'edit_item'          => __( 'Edit Chat', 'extrachill-chat' ),
+				'new_item'           => __( 'New Chat', 'extrachill-chat' ),
+				'view_item'          => __( 'View Chat', 'extrachill-chat' ),
+				'search_items'       => __( 'Search Chats', 'extrachill-chat' ),
+				'not_found'          => __( 'No chats found', 'extrachill-chat' ),
+				'not_found_in_trash' => __( 'No chats found in trash', 'extrachill-chat' ),
+			),
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'supports'            => array( 'title', 'author' ),
+			'capability_type'     => 'post',
+			'hierarchical'        => false,
+			'menu_position'       => 25,
+			'menu_icon'           => 'dashicons-format-chat',
+			'show_in_rest'        => false,
+			'publicly_queryable'  => false,
+			'exclude_from_search' => true,
+			'show_in_nav_menus'   => false,
+			'show_in_admin_bar'   => false,
+			'can_export'          => true,
+		)
+	);
 }
 
 /**
@@ -49,15 +52,17 @@ function ec_chat_get_or_create_chat( $user_id ) {
 		return new WP_Error( 'invalid_user', 'Invalid user ID' );
 	}
 
-	$existing_chat = get_posts( array(
-		'post_type'   => 'ec_chat',
-		'post_status' => 'publish',
-		'author'      => $user_id,
-		'numberposts' => 1,
-		'orderby'     => 'date',
-		'order'       => 'DESC',
-		'fields'      => 'ids',
-	) );
+	$existing_chat = get_posts(
+		array(
+			'post_type'   => 'ec_chat',
+			'post_status' => 'publish',
+			'author'      => $user_id,
+			'numberposts' => 1,
+			'orderby'     => 'date',
+			'order'       => 'DESC',
+			'fields'      => 'ids',
+		)
+	);
 
 	if ( ! empty( $existing_chat ) ) {
 		return $existing_chat[0];
@@ -68,12 +73,14 @@ function ec_chat_get_or_create_chat( $user_id ) {
 		return new WP_Error( 'invalid_user', 'User not found' );
 	}
 
-	$chat_post_id = wp_insert_post( array(
-		'post_title'  => sprintf( 'Chat - %s - %s', $user->display_name, current_time( 'Y-m-d H:i:s' ) ),
-		'post_type'   => 'ec_chat',
-		'post_status' => 'publish',
-		'post_author' => $user_id,
-	) );
+	$chat_post_id = wp_insert_post(
+		array(
+			'post_title'  => sprintf( 'Chat - %s - %s', $user->display_name, current_time( 'Y-m-d H:i:s' ) ),
+			'post_type'   => 'ec_chat',
+			'post_status' => 'publish',
+			'post_author' => $user_id,
+		)
+	);
 
 	if ( is_wp_error( $chat_post_id ) ) {
 		return $chat_post_id;
@@ -154,7 +161,7 @@ function ec_chat_save_conversation( $chat_post_id, $messages ) {
 			continue;
 		}
 
-		$role = $message['role'];
+		$role    = $message['role'];
 		$content = $message['content'] ?? null;
 
 		$extra_data = array();

@@ -95,7 +95,7 @@ class EC_Chat_DM_Tools {
 			$formatted_tools[] = array(
 				'name'        => $tool_id,
 				'description' => $tool_def['description'] ?? '',
-				'parameters'  => $tool_def['parameters'] ?? array()
+				'parameters'  => $tool_def['parameters'] ?? array(),
 			);
 		}
 

@@ -32,7 +32,7 @@ function ec_chat_enqueue_assets() {
 		true
 	);
 
-	$user_id = get_current_user_id();
+	$user_id      = get_current_user_id();
 	$chat_history = array();
 
 	if ( $user_id ) {
@@ -49,7 +49,7 @@ function ec_chat_enqueue_assets() {
 			'restUrl'     => rest_url( 'extrachill/v1/chat/' ),
 			'nonce'       => wp_create_nonce( 'wp_rest' ),
 			'userId'      => $user_id,
-			'chatHistory' => $chat_history
+			'chatHistory' => $chat_history,
 		)
 	);
 }
