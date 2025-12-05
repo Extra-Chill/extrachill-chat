@@ -158,9 +158,6 @@
 		addToolCallsInfo: function(toolCalls) {
 			const toolNames = {
 				'search_extrachill': 'Searched Extra Chill network',
-				'google_search': 'Searched Google',
-				'webfetch': 'Fetched web content',
-				'wordpress_post_reader': 'Read post content',
 				'add_link_to_page': 'Added link to artist page'
 			};
 

@@ -1,14 +1,12 @@
 <?php
 /**
- * Extensible Chat Tools Registry
+ * ExtraChill Chat Tool Registry
  *
- * Core tool discovery and management system that merges tools from multiple sources.
- * Provides unified interface for all chat tools regardless of source.
+ * Core tool discovery and management system for ExtraChill platform tools.
+ * Provides unified interface for all chat tools.
  *
  * Tool sources:
  * - ec_chat_tools: Chat-specific tools (artist platform, content creation, etc.)
- * - dm_chubes_ai_tools_multisite: External DM-Multisite plugin tools
- * - Future: ec_chat_admin_tools (admin-only tools)
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Unified tool registry with multi-source discovery
+ * Tool registry for ExtraChill platform tools
  */
-class EC_Chat_Tools {
+class EC_Chat_Tool_Registry {
 
 	/**
-	 * @var array All discovered tools from all sources
+	 * @var array All discovered tools
 	 */
 	private $tools = array();
 
@@ -30,26 +28,10 @@ class EC_Chat_Tools {
 	}
 
 	/**
-	 * Discover tools from all registered filter sources
+	 * Discover tools from registered filter sources
 	 */
 	private function discover_tools() {
-		// Discover from chat-specific tools filter
-		$chat_tools = apply_filters( 'ec_chat_tools', array() );
-
-		// Discover from external DM-Multisite plugin
-		$dm_tools = apply_filters( 'dm_chubes_ai_tools_multisite', array() );
-
-		// Exclude DM's local_search - we use ExtraChill's superior search_extrachill instead
-		if ( isset( $dm_tools['local_search'] ) ) {
-			unset( $dm_tools['local_search'] );
-		}
-
-		// Merge all sources
-		$this->tools = array_merge( $chat_tools, $dm_tools );
-
-		// Future expansion point:
-		// $admin_tools = apply_filters('ec_chat_admin_tools', array());
-		// $this->tools = array_merge($this->tools, $admin_tools);
+		$this->tools = apply_filters( 'ec_chat_tools', array() );
 	}
 
 	/**
@@ -98,22 +80,6 @@ class EC_Chat_Tools {
 
 		$tool = $this->tools[ $tool_id ];
 
-		// Handle DM-Multisite tool format (class/method)
-		if ( ! empty( $tool['class'] ) && ! empty( $tool['method'] ) ) {
-			try {
-				return call_user_func(
-					array( $tool['class'], $tool['method'] ),
-					$parameters,
-					$tool
-				);
-			} catch ( Exception $e ) {
-				return new WP_Error(
-					'tool_execution_failed',
-					sprintf( 'Tool %s execution failed: %s', $tool_id, $e->getMessage() )
-				);
-			}
-		}
-
 		// Handle chat tool format (callback function)
 		if ( ! empty( $tool['callback'] ) && is_callable( $tool['callback'] ) ) {
 			try {
@@ -128,7 +94,7 @@ class EC_Chat_Tools {
 
 		return new WP_Error(
 			'tool_invalid',
-			sprintf( 'Tool %s missing valid callback or class/method', $tool_id )
+			sprintf( 'Tool %s missing valid callback', $tool_id )
 		);
 	}
 
@@ -160,4 +126,4 @@ class EC_Chat_Tools {
 
 // Initialize global tool registry
 global $ec_chat_tools;
-$ec_chat_tools = new EC_Chat_Tools();
+$ec_chat_tools = new EC_Chat_Tool_Registry();

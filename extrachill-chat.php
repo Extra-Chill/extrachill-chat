@@ -3,7 +3,7 @@
  * Plugin Name: Extra Chill Chat
  * Plugin URI: https://extrachill.com
  * Description: AI chatbot for chat.extrachill.com with conversation history and tool calling
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: Chris Huber
  * Author URI: https://chubes.net
  * Requires Plugins: extrachill-ai-client
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EXTRACHILL_CHAT_VERSION', '0.2.0' );
+define( 'EXTRACHILL_CHAT_VERSION', '0.2.1' );
 define( 'EXTRACHILL_CHAT_PLUGIN_FILE', __FILE__ );
 define( 'EXTRACHILL_CHAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EXTRACHILL_CHAT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

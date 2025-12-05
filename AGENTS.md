@@ -5,7 +5,7 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 ## Plugin Information
 
 - **Name**: ExtraChill Chat
-- **Version**: 0.2.0
+- **Version**: 0.2.1
 - **Text Domain**: `extrachill-chat`
 - **Author**: Chris Huber
 - **Author URI**: https://chubes.net
@@ -154,7 +154,6 @@ extrachill-chat/
 │   └── tools/
 │       ├── chat-tools.php       # Tool registry and management
 │       ├── search-extrachill.php # Native multisite search tool
-│       ├── dm-tools.php         # DM-Multisite tool discovery
 │       └── artist-platform/
 │           └── add-link-to-page.php # Artist platform tool with multisite blog switching
 ├── assets/
@@ -311,7 +310,6 @@ composer run test
 ### Optional Plugin Integrations
 - **extrachill-multisite** - Provides `ec_is_team_member()` function for user context
 - **extrachill-artist-platform** - Provides `ec_get_user_artist_ids()` function for user context
-- **dm-multisite** - Provides AI tools via `dm_ai_tools_multisite` filter
 
 ### Required Theme
 - **extrachill** - Theme with `extrachill_template_homepage` filter and chat hooks
@@ -376,83 +374,6 @@ add_filter( 'extrachill_enable_sticky_header', '__return_false' );
 - Verify AI response appears
 - Test clear history functionality
 
-## Data Machine Tools Integration
-
-### DM-Multisite Tool Discovery
-ExtraChill Chat discovers AI tools from DM-Multisite extension via `dm_ai_tools_multisite` filter.
-
-**Available Tools** (when dm-multisite is network-activated):
-1. **google_search** - Search Google for external information
-2. **webfetch** - Fetch and extract content from web pages
-3. **local_search** - Search across ALL Extra Chill network sites (all post types)
-4. **wordpress_post_reader** - Read full posts from any network site
-
-### Tool Integration Architecture
-
-**Tool Discovery** (`inc/tools/dm-tools.php`):
-- `EC_Chat_DM_Tools` class manages tool discovery and execution
-- Uses `dm_ai_tools_multisite` filter to find available tools
-- Provides clean API for tool calls with error handling
-- Foundation for future ExtraChill-Chat specific tools
-
-**AI Integration** (`inc/core/ai-integration.php`):
-- `ec_chat_get_available_tools()` - Formats tools for AI request
-- `ec_chat_send_ai_message()` - Includes tools in conversation loop
-- Tools passed to `ec_chat_conversation_loop()` for multi-turn execution
-
-**Conversation Loop** (`inc/core/conversation-loop.php`):
-- Executes tools via `$ec_chat_tools->call_tool()`
-- Handles tool results and passes back to AI
-- Continues loop until AI returns final text response
-
-### Usage Pattern
-```php
-global $ec_chat_tools;
-
-// Check if tools available
-if ( $ec_chat_tools->has_tool( 'google_search' ) ) {
-    $result = $ec_chat_tools->call_tool( 'google_search', array(
-        'query' => 'latest electronic music news'
-    ) );
-}
-
-// Get all tools formatted for AI
-$ai_tools = $ec_chat_tools->get_tools_for_ai();
-```
-
-### Chat Agent Capabilities
-With DM-Multisite tools, the chat agent can:
-- **Search Google** for current information about artists, venues, events
-- **Fetch external content** from artist websites, venue pages, festival sites
-- **Search ALL Extra Chill sites** for posts, pages, products, forums, events (any post type)
-- **Read full posts** from any site in the network for detailed analysis
-- **Chain tool usage** via multi-turn loop (search → read → search again)
-- **Provide context-aware responses** with real-time network-wide intelligence
-
-### Tool Display in Interface
-JavaScript displays tool calls in UI between user message and AI response:
-- **Friendly Names**: `local_search` → "Searched Extra Chill network"
-- **Parameters**: Query, URL, or JSON parameters shown in `<code>` tags
-- **Info Boxes**: Gray boxes with tool name and parameters
-- **Multiple Tools**: Each tool call displayed separately
-
-### Key Insight: Local Search Power
-The `local_search` tool is incredibly powerful because:
-- Searches ALL post types (posts, pages, products, forums, events, etc.)
-- Searches ALL sites in the Extra Chill network
-- Returns site context (site_name, site_url, site_id) with every result
-- AI can specify which post types to search via parameters
-
-**This single tool eliminates the need for multiple custom search tools.**
-
-### Future Tool Development
-Through experimentation, discover what ExtraChill-Chat specific tools are actually needed:
-- User interaction tools?
-- Content creation/editing tools (admin only)?
-- Analytics/reporting tools?
-- Conversation management tools?
-
-The `inc/tools/` directory provides a clean place to add these as needs emerge.
 
 ## Artist Platform Tools with Multisite Pattern
 
@@ -566,7 +487,7 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 - Conversation history system via custom post type
 - Clear history functionality with AJAX endpoint
 - Four-layer AI directive system (core, custom, user context, site context)
-- Multisite site context directive via dm-multisite integration (wrapper pattern)
+- Multisite site context directive (network topology and site metadata)
 - Template override system via theme filters
 - Tool usage display in UI with friendly names
 - 20-message conversation history window
@@ -624,10 +545,10 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 - Review AJAX response in browser console
 
 ### Tool Calls Not Executing
-- Verify dm-multisite plugin is network-activated
 - Check `$ec_chat_tools` global is initialized
 - Review conversation loop iteration count
 - Check tool parameters match expected format
+- Verify required plugin dependencies are active (extrachill-users, extrachill-search)
 
 ## User Info
 
