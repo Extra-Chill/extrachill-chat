@@ -3,7 +3,7 @@
  * Plugin Name: Extra Chill Chat
  * Plugin URI: https://extrachill.com
  * Description: AI chatbot for chat.extrachill.com with conversation history and tool calling
- * Version: 1.0.0
+ * Version: 0.2.0
  * Author: Chris Huber
  * Author URI: https://chubes.net
  * Requires Plugins: extrachill-ai-client
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EXTRACHILL_CHAT_VERSION', '1.0.0' );
+define( 'EXTRACHILL_CHAT_VERSION', '0.2.0' );
 define( 'EXTRACHILL_CHAT_PLUGIN_FILE', __FILE__ );
 define( 'EXTRACHILL_CHAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EXTRACHILL_CHAT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -35,7 +35,6 @@ function extrachill_chat_init() {
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/ChatUserContextDirective.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/directives/MultisiteSiteContextWrapper.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/conversation-loop.php';
-	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ajax-handler.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/ai-integration.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/assets.php';
 	require_once EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/core/chat-hooks.php';
@@ -46,10 +45,10 @@ function extrachill_chat_init() {
 	}
 }
 
-add_filter( 'extrachill_template_homepage', 'ec_chat_override_homepage_template' );
+add_action( 'extrachill_homepage_content', 'ec_chat_render_homepage' );
 
-function ec_chat_override_homepage_template( $template ) {
-	return EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/templates/chat-interface.php';
+function ec_chat_render_homepage() {
+	include EXTRACHILL_CHAT_PLUGIN_DIR . 'inc/templates/chat-interface.php';
 }
 
 add_filter( 'extrachill_enable_sticky_header', '__return_false' );
