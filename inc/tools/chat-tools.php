@@ -7,7 +7,7 @@
  *
  * Tool sources:
  * - ec_chat_tools: Chat-specific tools (artist platform, content creation, etc.)
- * - dm_ai_tools_multisite: External DM-Multisite plugin tools
+ * - dm_chubes_ai_tools_multisite: External DM-Multisite plugin tools
  * - Future: ec_chat_admin_tools (admin-only tools)
  */
 
@@ -37,7 +37,7 @@ class EC_Chat_Tools {
 		$chat_tools = apply_filters( 'ec_chat_tools', array() );
 
 		// Discover from external DM-Multisite plugin
-		$dm_tools = apply_filters( 'dm_ai_tools_multisite', array() );
+		$dm_tools = apply_filters( 'dm_chubes_ai_tools_multisite', array() );
 
 		// Exclude DM's local_search - we use ExtraChill's superior search_extrachill instead
 		if ( isset( $dm_tools['local_search'] ) ) {

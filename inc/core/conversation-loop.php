@@ -39,11 +39,11 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 			'model'    => 'gpt-5-mini'
 		);
 
-		$response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools );
+		$response = apply_filters( 'chubes_ai_request', $request_data, 'openai', null, $tools );
 
 		if ( ! isset( $response['success'] ) || ! $response['success'] ) {
 			$error_message = isset( $response['error'] ) ? $response['error'] : 'AI request failed';
-			return new WP_Error( 'ai_request_failed', $error_message );
+			return new WP_Error( 'chubes_ai_request_failed', $error_message );
 		}
 
 		$has_tool_calls = isset( $response['data']['tool_calls'] ) && ! empty( $response['data']['tool_calls'] );

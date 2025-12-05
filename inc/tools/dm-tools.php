@@ -1,6 +1,6 @@
 <?php
 /**
- * Discovers and exposes Data Machine tools via dm_ai_tools_multisite filter.
+ * Discovers and exposes Data Machine tools via dm_chubes_ai_tools_multisite filter.
  * Foundation for adding ExtraChill-Chat specific tools in the future.
  */
 
@@ -23,7 +23,7 @@ class EC_Chat_DM_Tools {
 	}
 
 	private function discover_tools() {
-		$this->tools = apply_filters( 'dm_ai_tools_multisite', array() );
+		$this->tools = apply_filters( 'dm_chubes_ai_tools_multisite', array() );
 	}
 
 	/**

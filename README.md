@@ -83,7 +83,7 @@ composer run test
 
 ## Documentation
 
-- **CLAUDE.md** - Comprehensive technical documentation for AI agents and developers
+- **AGENTS.md** - Comprehensive technical documentation for AI agents and developers
 - **README.md** - This file (GitHub overview)
 
 ## License

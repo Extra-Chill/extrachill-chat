@@ -1,35 +1,42 @@
 /**
  * ExtraChill Chat JavaScript
  *
- * Handles chat interface interactions and AJAX communication.
+ * Handles chat interface interactions via REST API.
  * Displays AI responses as HTML (not markdown) via innerHTML.
  * Loads conversation history on page load and displays tool usage metadata.
  */
 
-(function($) {
+(function() {
 	'use strict';
 
 	const Chat = {
+		container: null,
+		messages: null,
+		input: null,
+		sendBtn: null,
+		clearBtn: null,
+
 		init: function() {
 			this.cacheDom();
+			if (!this.container) return;
 			this.bindEvents();
 			this.loadChatHistory();
 			this.focusInput();
 		},
 
 		cacheDom: function() {
-			this.$container = $('#ec-chat-container');
-			this.$messages = $('#ec-chat-messages');
-			this.$input = $('#ec-chat-input');
-			this.$sendBtn = $('#ec-chat-send');
-			this.$clearBtn = $('#ec-chat-clear');
+			this.container = document.getElementById('ec-chat-container');
+			this.messages = document.getElementById('ec-chat-messages');
+			this.input = document.getElementById('ec-chat-input');
+			this.sendBtn = document.getElementById('ec-chat-send');
+			this.clearBtn = document.getElementById('ec-chat-clear');
 		},
 
 		bindEvents: function() {
-			this.$sendBtn.on('click', this.handleSend.bind(this));
-			this.$input.on('keydown', this.handleKeydown.bind(this));
-			this.$input.on('input', this.handleInput.bind(this));
-			this.$clearBtn.on('click', this.handleClear.bind(this));
+			this.sendBtn.addEventListener('click', this.handleSend.bind(this));
+			this.input.addEventListener('keydown', this.handleKeydown.bind(this));
+			this.input.addEventListener('input', this.handleInput.bind(this));
+			this.clearBtn.addEventListener('click', this.handleClear.bind(this));
 		},
 
 		handleKeydown: function(e) {
@@ -40,53 +47,64 @@
 		},
 
 		handleInput: function() {
-			this.$input.css('height', 'auto');
-			this.$input.css('height', this.$input[0].scrollHeight + 'px');
+			this.input.style.height = 'auto';
+			this.input.style.height = this.input.scrollHeight + 'px';
 		},
 
 		handleSend: function() {
-			const message = this.$input.val().trim();
+			const message = this.input.value.trim();
 
 			if (!message) {
 				return;
 			}
 
-			$('#ec-chat-placeholder').remove();
+			const placeholder = document.getElementById('ec-chat-placeholder');
+			if (placeholder) placeholder.remove();
+
 			this.disableInput();
 			this.addMessage(message, 'user');
-			this.$input.val('').css('height', 'auto');
+			this.input.value = '';
+			this.input.style.height = 'auto';
 			this.addTypingIndicator();
 
-			$.ajax({
-				url: ecChatData.ajaxUrl,
-				type: 'POST',
-				data: {
-					action: 'ec_chat_message',
-					nonce: ecChatData.nonce,
-					message: message
+			fetch(ecChatData.restUrl + 'message', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': ecChatData.nonce
 				},
-				success: this.handleSuccess.bind(this),
-				error: this.handleError.bind(this),
-				complete: this.enableInput.bind(this)
-			});
+				body: JSON.stringify({ message: message })
+			})
+			.then(this.handleResponse.bind(this))
+			.then(this.handleSuccess.bind(this))
+			.catch(this.handleError.bind(this))
+			.finally(this.enableInput.bind(this));
 		},
 
-		handleSuccess: function(response) {
+		handleResponse: function(response) {
+			if (!response.ok) {
+				return response.json().then(function(error) {
+					throw new Error(error.message || 'Request failed');
+				});
+			}
+			return response.json();
+		},
+
+		handleSuccess: function(data) {
 			this.removeTypingIndicator();
 
-			if (response.success && response.data.message) {
-				// Display tool usage metadata if AI used tools
-				if (response.data.tool_calls && response.data.tool_calls.length > 0) {
-					this.addToolCallsInfo(response.data.tool_calls);
+			if (data.message) {
+				if (data.tool_calls && data.tool_calls.length > 0) {
+					this.addToolCallsInfo(data.tool_calls);
 				}
 
-				this.addMessage(response.data.message, 'assistant');
+				this.addMessage(data.message, 'assistant');
 			} else {
 				this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
 			}
 		},
 
-		handleError: function(xhr, status, error) {
+		handleError: function(error) {
 			this.removeTypingIndicator();
 			console.error('Chat error:', error);
 			this.addMessage('Sorry, I encountered a connection error. Please try again.', 'assistant');
@@ -95,35 +113,46 @@
 		addMessage: function(content, role) {
 			const messageClass = role === 'user' ? 'ec-user-message' : 'ec-assistant-message';
 
-			const $message = $('<div>')
-				.addClass('ec-chat-message')
-				.addClass(messageClass)
-				.append(
-					$('<div>')
-						.addClass('ec-message-content')
-						.html(role === 'assistant' ? content : $('<p>').text(content))  // AI: HTML, User: text
-				);
+			const message = document.createElement('div');
+			message.className = 'ec-chat-message ' + messageClass;
 
-			this.$messages.append($message);
+			const messageContent = document.createElement('div');
+			messageContent.className = 'ec-message-content';
+
+			if (role === 'assistant') {
+				messageContent.innerHTML = content;
+			} else {
+				const p = document.createElement('p');
+				p.textContent = content;
+				messageContent.appendChild(p);
+			}
+
+			message.appendChild(messageContent);
+			this.messages.appendChild(message);
 			this.scrollToBottom();
 		},
 
 		addTypingIndicator: function() {
-			const $indicator = $('<div>')
-				.addClass('ec-chat-message ec-assistant-message ec-typing-indicator')
-				.attr('id', 'ec-typing-indicator')
-				.append(
-					$('<div>')
-						.addClass('ec-message-content')
-						.append($('<p>').addClass('ec-typing-dots').html('<span>.</span><span>.</span><span>.</span>'))
-				);
+			const indicator = document.createElement('div');
+			indicator.className = 'ec-chat-message ec-assistant-message ec-typing-indicator';
+			indicator.id = 'ec-typing-indicator';
 
-			this.$messages.append($indicator);
+			const content = document.createElement('div');
+			content.className = 'ec-message-content';
+
+			const p = document.createElement('p');
+			p.className = 'ec-typing-dots';
+			p.innerHTML = '<span>.</span><span>.</span><span>.</span>';
+
+			content.appendChild(p);
+			indicator.appendChild(content);
+			this.messages.appendChild(indicator);
 			this.scrollToBottom();
 		},
 
 		removeTypingIndicator: function() {
-			$('#ec-typing-indicator').remove();
+			const indicator = document.getElementById('ec-typing-indicator');
+			if (indicator) indicator.remove();
 		},
 
 		addToolCallsInfo: function(toolCalls) {
@@ -135,49 +164,50 @@
 				'add_link_to_page': 'Added link to artist page'
 			};
 
-			const $toolInfo = $('<div>')
-				.addClass('ec-tool-calls-info');
+			const toolInfo = document.createElement('div');
+			toolInfo.className = 'ec-tool-calls-info';
 
 			toolCalls.forEach(function(call) {
 				const toolName = toolNames[call.tool] || call.tool;
 				const params = call.parameters.query || call.parameters.url || JSON.stringify(call.parameters);
 
-				$toolInfo.append(
-					$('<div>')
-						.addClass('ec-tool-call')
-						.html(toolName + ': <code>' + params + '</code>')
-				);
+				const toolCall = document.createElement('div');
+				toolCall.className = 'ec-tool-call';
+				toolCall.innerHTML = toolName + ': <code>' + params + '</code>';
+
+				toolInfo.appendChild(toolCall);
 			});
 
-			this.$messages.append($toolInfo);
+			this.messages.appendChild(toolInfo);
 			this.scrollToBottom();
 		},
 
 		scrollToBottom: function() {
-			this.$messages.animate({
-				scrollTop: this.$messages[0].scrollHeight
-			}, 300);
+			this.messages.scrollTo({
+				top: this.messages.scrollHeight,
+				behavior: 'smooth'
+			});
 		},
 
 		disableInput: function() {
-			this.$input.prop('disabled', true);
-			this.$sendBtn.prop('disabled', true);
+			this.input.disabled = true;
+			this.sendBtn.disabled = true;
 		},
 
 		enableInput: function() {
-			this.$input.prop('disabled', false);
-			this.$sendBtn.prop('disabled', false);
+			this.input.disabled = false;
+			this.sendBtn.disabled = false;
 			this.focusInput();
 		},
 
 		focusInput: function() {
-			this.$input.focus();
+			this.input.focus();
 		},
 
 		loadChatHistory: function() {
-			// Load saved conversation history from PHP on page load
 			if (ecChatData.chatHistory && ecChatData.chatHistory.length > 0) {
-				$('#ec-chat-placeholder').remove();
+				const placeholder = document.getElementById('ec-chat-placeholder');
+				if (placeholder) placeholder.remove();
 
 				ecChatData.chatHistory.forEach(function(message) {
 					this.addMessage(message.content, message.role);
@@ -192,29 +222,33 @@
 				return;
 			}
 
-			$.ajax({
-				url: ecChatData.ajaxUrl,
-				type: 'POST',
-				data: {
-					action: 'ec_chat_clear_history',
-					nonce: ecChatData.clearNonce
-				},
-				success: this.handleClearSuccess.bind(this),
-				error: this.handleClearError.bind(this)
-			});
+			fetch(ecChatData.restUrl + 'history', {
+				method: 'DELETE',
+				headers: {
+					'X-WP-Nonce': ecChatData.nonce
+				}
+			})
+			.then(this.handleClearResponse.bind(this))
+			.then(this.handleClearSuccess.bind(this))
+			.catch(this.handleClearError.bind(this));
 		},
 
-		handleClearSuccess: function(response) {
-			if (response.success) {
-				this.$messages.empty();
-				this.$messages.append(
-					'<div id="ec-chat-placeholder" class="ec-chat-placeholder">' +
-					'Welcome to Extra Chill Chat, your AI Powered Independent Music Assistant' +
-					'</div>'
-				);
-			} else {
-				alert('Failed to clear chat history. Please try again.');
+		handleClearResponse: function(response) {
+			if (!response.ok) {
+				return response.json().then(function(error) {
+					throw new Error(error.message || 'Request failed');
+				});
 			}
+			return response.json();
+		},
+
+		handleClearSuccess: function(data) {
+			this.messages.innerHTML = '';
+			const placeholder = document.createElement('div');
+			placeholder.id = 'ec-chat-placeholder';
+			placeholder.className = 'ec-chat-placeholder';
+			placeholder.textContent = 'Welcome to Extra Chill Chat, your AI Powered Independent Music Assistant';
+			this.messages.appendChild(placeholder);
 		},
 
 		handleClearError: function() {
@@ -222,10 +256,10 @@
 		}
 	};
 
-	$(document).ready(function() {
-		if ($('#ec-chat-container').length) {
+	document.addEventListener('DOMContentLoaded', function() {
+		if (document.getElementById('ec-chat-container')) {
 			Chat.init();
 		}
 	});
 
-})(jQuery);
+})();

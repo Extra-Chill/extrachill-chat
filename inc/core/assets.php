@@ -27,7 +27,7 @@ function ec_chat_enqueue_assets() {
 	wp_enqueue_script(
 		'extrachill-chat',
 		EXTRACHILL_CHAT_PLUGIN_URL . 'assets/js/chat.js',
-		array( 'jquery' ),
+		array(),
 		file_exists( $js_file ) ? filemtime( $js_file ) : EXTRACHILL_CHAT_VERSION,
 		true
 	);
@@ -46,9 +46,8 @@ function ec_chat_enqueue_assets() {
 		'extrachill-chat',
 		'ecChatData',
 		array(
-			'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-			'nonce'       => wp_create_nonce( 'ec_chat_nonce' ),
-			'clearNonce'  => wp_create_nonce( 'ec_chat_clear_nonce' ),
+			'restUrl'     => rest_url( 'extrachill/v1/chat/' ),
+			'nonce'       => wp_create_nonce( 'wp_rest' ),
 			'userId'      => $user_id,
 			'chatHistory' => $chat_history
 		)

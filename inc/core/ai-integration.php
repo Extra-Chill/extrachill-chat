@@ -23,7 +23,7 @@ function ec_chat_get_available_tools() {
 /**
  * Send AI message with tool support and 20-message conversation history window.
  *
- * System prompts injected via directive filters during ai_request:
+ * System prompts injected via directive filters during chubes_ai_request:
  * - Priority 10: ChatCoreDirective (agent identity + HTML requirement)
  * - Priority 20: ChatSystemPromptDirective (custom prompt from site settings)
  * - Priority 30: ChatUserContextDirective (user identity and membership)

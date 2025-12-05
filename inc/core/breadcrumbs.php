@@ -6,7 +6,7 @@
  * breadcrumbs with "Extra Chill → Chat" root link.
  *
  * @package ExtraChillChat
- * @since 1.0.0
+ * @since 0.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @param string $root_link Default root breadcrumb link HTML
  * @return string Modified root link
- * @since 1.0.0
+ * @since 0.1.0
  */
 function ec_chat_breadcrumb_root( $root_link ) {
 	// Only apply on chat.extrachill.com (blog ID 5)
@@ -46,7 +46,7 @@ add_filter( 'extrachill_breadcrumbs_root', 'ec_chat_breadcrumb_root' );
  *
  * @param string $custom_trail Existing custom trail from other plugins
  * @return string Breadcrumb trail HTML
- * @since 1.0.0
+ * @since 0.1.0
  */
 function ec_chat_breadcrumb_trail_homepage( $custom_trail ) {
 	// Only apply on chat.extrachill.com (blog ID 5)
@@ -62,3 +62,30 @@ function ec_chat_breadcrumb_trail_homepage( $custom_trail ) {
 	return $custom_trail;
 }
 add_filter( 'extrachill_breadcrumbs_override_trail', 'ec_chat_breadcrumb_trail_homepage' );
+
+/**
+ * Override back-to-home link label for chat pages
+ *
+ * Changes "Back to Extra Chill" to "Back to Chat" on chat pages.
+ * Uses theme's extrachill_back_to_home_label filter.
+ * Only applies on blog ID 5 (chat.extrachill.com).
+ *
+ * @param string $label Default back-to-home link label
+ * @param string $url   Back-to-home link URL
+ * @return string Modified label
+ * @since 0.1.0
+ */
+function ec_chat_back_to_home_label( $label, $url ) {
+	// Only apply on chat.extrachill.com (blog ID 5)
+	if ( get_current_blog_id() !== 5 ) {
+		return $label;
+	}
+
+	// Don't override on homepage (homepage should say "Back to Extra Chill")
+	if ( is_front_page() ) {
+		return $label;
+	}
+
+	return '← Back to Chat';
+}
+add_filter( 'extrachill_back_to_home_label', 'ec_chat_back_to_home_label', 10, 2 );

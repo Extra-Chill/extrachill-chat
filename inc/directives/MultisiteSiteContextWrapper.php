@@ -2,7 +2,7 @@
 /**
  * Wrapper for dm-multisite's MultisiteSiteContextDirective.
  *
- * Hooks the directive to ai_request filter at priority 40 when dm-multisite is active.
+ * Hooks the directive to chubes_ai_request filter at priority 40 when dm-multisite is active.
  * Provides comprehensive WordPress multisite network context to the AI agent.
  *
  * Gracefully degrades if dm-multisite plugin is not network-activated.
@@ -23,5 +23,5 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Priority 99: ai-http-client actual API execution
  */
 if ( class_exists( 'DMMultisite\MultisiteSiteContextDirective' ) ) {
-	add_filter( 'ai_request', array( 'DMMultisite\MultisiteSiteContextDirective', 'inject' ), 40, 5 );
+	add_filter( 'chubes_ai_request', array( 'DMMultisite\MultisiteSiteContextDirective', 'inject' ), 40, 5 );
 }

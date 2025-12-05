@@ -1,14 +1,12 @@
 <?php
 /**
- * Homepage template for chat.extrachill.com.
- * Overrides theme homepage via extrachill_template_homepage filter.
+ * Homepage content for chat.extrachill.com.
+ * Hooked via extrachill_homepage_content action.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-get_header();
 
 extrachill_breadcrumbs();
 ?>
@@ -41,7 +39,3 @@ extrachill_breadcrumbs();
 
 	<?php do_action( 'extrachill_below_chat' ); ?>
 </div>
-
-<?php
-get_footer();
-?>

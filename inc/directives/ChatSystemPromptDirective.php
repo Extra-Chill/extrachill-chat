@@ -42,4 +42,4 @@ class ChatSystemPromptDirective {
 }
 
 // Register directive at priority 20 - runs AFTER core directive but BEFORE site context
-add_filter( 'ai_request', array( 'ChatSystemPromptDirective', 'inject' ), 20, 5 );
+add_filter( 'chubes_ai_request', array( 'ChatSystemPromptDirective', 'inject' ), 20, 5 );

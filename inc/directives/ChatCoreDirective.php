@@ -2,7 +2,7 @@
 /**
  * Priority 10 AI directive establishing chat agent identity and HTML formatting requirement.
  *
- * Filter execution order (all run during ai_request filter):
+ * Filter execution order (all run during chubes_ai_request filter):
  * - Priority 10: ChatCoreDirective (this file) - agent identity + HTML requirement
  * - Priority 20: ChatSystemPromptDirective - custom prompt from site settings
  * - Priority 30: ChatUserContextDirective - user identity and membership
@@ -84,4 +84,4 @@ class ChatCoreDirective {
 }
 
 // Register directive at priority 10 - runs FIRST before other directives
-add_filter( 'ai_request', array( 'ChatCoreDirective', 'inject' ), 10, 5 );
+add_filter( 'chubes_ai_request', array( 'ChatCoreDirective', 'inject' ), 10, 5 );

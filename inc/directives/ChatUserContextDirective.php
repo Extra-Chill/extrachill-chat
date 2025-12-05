@@ -135,4 +135,4 @@ class ChatUserContextDirective {
 }
 
 // Register directive at priority 30 - runs AFTER custom system prompt, BEFORE site context
-add_filter( 'ai_request', array( 'ChatUserContextDirective', 'inject' ), 30, 5 );
+add_filter( 'chubes_ai_request', array( 'ChatUserContextDirective', 'inject' ), 30, 5 );
