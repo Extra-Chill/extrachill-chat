@@ -27,7 +27,7 @@ When the dm-multisite plugin is active and network-activated, extrachill-chat ho
 
 This provides the AI with comprehensive network context:
 - Current site context (site name, URL, blog ID)
-- Network topology information (all 8 active sites in the Extra Chill network; horoscope planned for Blog ID 10)
+- Network topology information (all 9 active sites in the Extra Chill network; docs at Blog ID 10; horoscope planned for Blog ID 11)
 - Available post types and taxonomies per site
 - Cross-site data access patterns via JSON-formatted metadata
 

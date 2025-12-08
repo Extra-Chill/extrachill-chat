@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-12-08
+
+### Changed
+- Removed dependency on dm-multisite plugin for tool integration
+- Updated network topology documentation (9 active sites: Blog IDs 1-5, 7-10)
+- Enhanced breadcrumb navigation with network dropdown target class
+
+### Fixed
+- Fixed 108 PHP coding standards violations across codebase
+- Improved code formatting and consistency
+- Enhanced error handling and readability
+
+### Technical
+- Replaced hardcoded artist blog ID with dynamic `ec_get_blog_id('artist')` lookup
+- Streamlined tool registry to focus on ExtraChill platform tools only
+- Updated JavaScript tool display names to remove external dependencies
+
 ## [0.2.0] - 2025-12-05
 
 ### Added

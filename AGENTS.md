@@ -56,7 +56,7 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 #### Four-Layer AI Directive System (`inc/directives/`)
 **Priority 10: ChatCoreDirective** (`ChatCoreDirective.php`)
 - Agent identity and platform architecture overview
-- 8-site active multisite network description (Blog IDs 1–5, 7–9) with horoscope planned for Blog ID 10
+- 9-site active multisite network description (Blog IDs 1–5, 7–10) with docs at Blog ID 10; horoscope planned for Blog ID 11
 - HTML formatting requirement (NOT markdown)
 - Tool usage instructions (use tools, don't describe them)
 

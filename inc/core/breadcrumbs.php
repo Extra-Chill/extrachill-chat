@@ -56,7 +56,7 @@ function ec_chat_breadcrumb_trail_homepage( $custom_trail ) {
 
 	// Only on front page (homepage)
 	if ( is_front_page() ) {
-		return '<span>Chat</span>';
+		return '<span class="network-dropdown-target">Chat</span>';
 	}
 
 	return $custom_trail;

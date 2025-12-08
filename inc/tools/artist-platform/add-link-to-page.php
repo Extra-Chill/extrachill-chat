@@ -84,7 +84,14 @@ function ec_chat_tool_add_link( $parameters, $tool_def ) {
 	$artist_id = $artist_ids[0];
 
 	// Switch to artist site to access artist platform functions
-	switch_to_blog( 4 );
+	$artist_blog_id = function_exists( 'ec_get_blog_id' ) ? ec_get_blog_id( 'artist' ) : null;
+	if ( ! $artist_blog_id ) {
+		return array(
+			'error' => 'Artist site is not configured.',
+		);
+	}
+
+	switch_to_blog( $artist_blog_id );
 	try {
 		// Check if artist platform functions exist on artist site
 		if ( ! function_exists( 'ec_get_link_page_for_artist' ) ) {
