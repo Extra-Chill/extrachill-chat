@@ -46,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Legacy filter hook references
 
 ### Technical
-- Updated tool discovery filter to `dm_chubes_ai_tools_multisite`
+- Updated tool discovery filter to `ec_chat_tools`
 - Enhanced error handling with new error codes
 - Improved asset localization for REST API integration
 

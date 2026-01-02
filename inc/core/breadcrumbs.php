@@ -24,18 +24,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 0.1.0
  */
 function ec_chat_breadcrumb_root( $root_link ) {
-	// Only apply on chat.extrachill.com (blog ID 5)
-	if ( get_current_blog_id() !== 5 ) {
-		return $root_link;
-	}
-
-	// On homepage, just "Extra Chill" (trail will add "Chat")
 	if ( is_front_page() ) {
-		return '<a href="https://extrachill.com">Extra Chill</a>';
+		$main_site_url = ec_get_site_url( 'main' );
+		return '<a href="' . esc_url( $main_site_url ) . '">Extra Chill</a>';
 	}
 
-	// On other pages, include "Chat" in root
-	return '<a href="https://extrachill.com">Extra Chill</a> › <a href="' . esc_url( home_url() ) . '">Chat</a>';
+	$main_site_url = ec_get_site_url( 'main' );
+	return '<a href="' . esc_url( $main_site_url ) . '">Extra Chill</a> › <a href="' . esc_url( home_url() ) . '">Chat</a>';
 }
 add_filter( 'extrachill_breadcrumbs_root', 'ec_chat_breadcrumb_root' );
 
@@ -49,12 +44,6 @@ add_filter( 'extrachill_breadcrumbs_root', 'ec_chat_breadcrumb_root' );
  * @since 0.1.0
  */
 function ec_chat_breadcrumb_trail_homepage( $custom_trail ) {
-	// Only apply on chat.extrachill.com (blog ID 5)
-	if ( get_current_blog_id() !== 5 ) {
-		return $custom_trail;
-	}
-
-	// Only on front page (homepage)
 	if ( is_front_page() ) {
 		return '<span class="network-dropdown-target">Chat</span>';
 	}
@@ -76,16 +65,11 @@ add_filter( 'extrachill_breadcrumbs_override_trail', 'ec_chat_breadcrumb_trail_h
  * @since 0.1.0
  */
 function ec_chat_back_to_home_label( $label, $url ) {
-	// Only apply on chat.extrachill.com (blog ID 5)
-	if ( get_current_blog_id() !== 5 ) {
-		return $label;
-	}
-
-	// Don't override on homepage (homepage should say "Back to Extra Chill")
 	if ( is_front_page() ) {
 		return $label;
 	}
 
-	return '← Back to Chat';
+	return '�0 Back to Chat';
 }
 add_filter( 'extrachill_back_to_home_label', 'ec_chat_back_to_home_label', 10, 2 );
+

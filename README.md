@@ -6,8 +6,8 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 
 - **Multi-Turn Conversation Loop** - Chained tool usage (search → read → analyze → respond)
 - **Four-Layer AI Directive System** - Core platform context, custom prompts, user identity, site context
-- **Network Topology Context** - Comprehensive multisite network metadata via dm-multisite integration
-- **Tool Integration** - Google search, web fetch, network-wide content search, post reading
+- **Network Topology Context** - Optional network/site metadata via MultisiteSiteContextWrapper (requires dm-multisite)
+- **Tool Integration** - Native Extra Chill tools registered via `ec_chat_tools`
 - **Conversation History** - 20-message window stored per user
 - **Network-Wide Authentication** - Any logged-in multisite user can access
 - **Template Override System** - Replaces homepage on chat.extrachill.com
@@ -21,15 +21,14 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 - [extrachill](https://github.com/Extra-Chill/extrachill) theme
 
 ### Optional
-- [dm-multisite](https://github.com/Extra-Chill/dm-multisite) plugin (network-activated) - Provides AI tools and site context directive
+- [dm-multisite](https://github.com/Extra-Chill/dm-multisite) plugin (network-activated) - Provides MultisiteSiteContextDirective (site/network context injected via wrapper)
 
 ## Installation
 
-1. Download or clone this repository
-2. Upload to `/wp-content/plugins/extrachill-chat/`
-3. Activate on chat.extrachill.com site (site-activate, NOT network-activate)
-4. Configure OpenAI API key in extrachill-ai-client settings
-5. Optionally customize system prompt in Site Admin → ExtraChill Chat
+1. Upload to `/wp-content/plugins/extrachill-chat/`
+2. Activate on chat.extrachill.com (site-activate)
+3. Configure API keys in Network Admin → ExtraChill Multisite → AI Client
+4. Optionally customize system prompt in Site Admin → ExtraChill Chat
 
 ## Architecture
 
@@ -50,12 +49,12 @@ AI chatbot plugin for Extra Chill's WordPress multisite network, providing a Cha
 - Executes tools and passes results back to AI until final text response
 
 ### Tool Integration
-Provides native ExtraChill search tool and discovers additional tools from plugins:
-- `search_extrachill` - Native multisite search with superior relevance scoring (via `ec_chat_tools` filter)
-- `google_search` - Search Google for external information (via dm-multisite)
-- `webfetch` - Fetch and extract content from web pages (via dm-multisite)
-- `wordpress_post_reader` - Read full posts from any site (via dm-multisite)
-- `add_link_to_page` - Add links to artist link pages (via `ec_chat_tools` filter)
+Tools register via the `ec_chat_tools` filter and are managed by `EC_Chat_Tool_Registry`.
+
+Current tools in this plugin:
+- `search_extrachill` - Search across the Extra Chill network
+- `add_link_to_page` - Add links to the current user’s artist link page (uses multisite blog switching to the artist site)
+
 
 ## Development
 
@@ -78,8 +77,9 @@ composer run test
 ```
 
 ### Build Output
-- `/build/extrachill-chat/` - Clean production directory
 - `/build/extrachill-chat.zip` - Deployment package
+
+Note: The intermediate `/build/extrachill-chat/` directory is temporary and removed during the build.
 
 ## Documentation
 

@@ -4,13 +4,14 @@ This directory contains AI directive classes that inject system messages into AI
 
 ## Directive Priority System
 
-Directives run in priority order (lowest first) before the main AI request executes at priority 99:
+Directives run in priority order (lowest first) before the downstream AI request handler executes:
 
 - **Priority 10**: `ChatCoreDirective` - Establishes agent identity and HTML formatting requirement
 - **Priority 20**: `ChatSystemPromptDirective` - Injects user's custom system prompt from settings
 - **Priority 30**: `ChatUserContextDirective` - Injects current user identity and membership status
-- **Priority 40**: `MultisiteSiteContextDirective` - From dm-multisite plugin (if active) - provides network context
-- **Priority 99**: Main `ai_request` filter executes the actual API call via ai-http-client
+- **Priority 40**: `DMMultisite\MultisiteSiteContextDirective` (via `MultisiteSiteContextWrapper.php`, if available) - provides network context
+
+All directives attach to the `chubes_ai_request` filter.
 
 ## What Are Directives?
 
@@ -23,11 +24,11 @@ Directives are system messages that provide foundational context to the AI befor
 
 ## Integration with dm-multisite
 
-When the dm-multisite plugin is active and network-activated, extrachill-chat hooks its `MultisiteSiteContextDirective` to the `ai_request` filter at priority 40 via the `MultisiteSiteContextWrapper.php` file.
+When the dm-multisite plugin is active, extrachill-chat conditionally hooks `DMMultisite\MultisiteSiteContextDirective` to the `chubes_ai_request` filter at priority 40 via the `MultisiteSiteContextWrapper.php` file.
 
 This provides the AI with comprehensive network context:
 - Current site context (site name, URL, blog ID)
-- Network topology information (all 9 active sites in the Extra Chill network; docs at Blog ID 10; horoscope planned for Blog ID 11)
+- Network topology information (all 10 active sites in the Extra Chill network; horoscope planned for Blog ID 12)
 - Available post types and taxonomies per site
 - Cross-site data access patterns via JSON-formatted metadata
 
@@ -36,7 +37,7 @@ The wrapper pattern allows extrachill-chat to:
 - Gracefully degrade if dm-multisite is not network-activated
 - Maintain clean separation between plugins while sharing context
 
-This enables the chat agent to understand which site the user is on and intelligently access data across the entire network using the `search_extrachill` and `wordpress_post_reader` tools.
+This enables the chat agent to understand which site the user is on. (Tool availability depends on which tools are registered via the `ec_chat_tools` filter.)
 
 ## Directive Execution Flow
 
@@ -93,7 +94,7 @@ To create a new directive:
 
 3. **Register the filter** at appropriate priority:
    ```php
-   add_filter('ai_request', [ClassName::class, 'inject'], PRIORITY, 5);
+    add_filter( 'chubes_ai_request', [ ClassName::class, 'inject' ], PRIORITY, 5 );
    ```
 
 4. **Choose priority** based on purpose:

@@ -108,17 +108,17 @@ class ChatUserContextDirective {
 	}
 
 	/**
-	 * Uses extrachill-artist-platform ec_get_user_artist_ids() if available.
+	 * Uses extrachill-users ec_get_artists_for_user() if available.
 	 *
 	 * @param int $user_id User ID
 	 * @return string|null Artist status string or null if function unavailable
 	 */
 	private static function check_artist_status( $user_id ) {
-		if ( ! function_exists( 'ec_get_user_artist_ids' ) ) {
+		if ( ! function_exists( 'ec_get_artists_for_user' ) ) {
 			return null;
 		}
 
-		$artist_ids = ec_get_user_artist_ids( $user_id );
+		$artist_ids = ec_get_artists_for_user( $user_id );
 
 		if ( empty( $artist_ids ) ) {
 			return 'No';
@@ -133,7 +133,12 @@ class ChatUserContextDirective {
 	 * @return bool|null True if community member, false if not, null if site not found
 	 */
 	private static function check_community_member_status( $user_id ) {
-		return is_user_member_of_blog( $user_id, 2 );
+		$community_blog_id = function_exists( 'ec_get_blog_id' ) ? ec_get_blog_id( 'community' ) : null;
+		if ( ! $community_blog_id ) {
+			return null;
+		}
+
+		return is_user_member_of_blog( $user_id, $community_blog_id );
 	}
 }
 

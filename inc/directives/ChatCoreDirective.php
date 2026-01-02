@@ -50,12 +50,12 @@ class ChatCoreDirective {
 
 		$directive .= "PLATFORM ARCHITECTURE:\n";
 		$directive .= "- WordPress multisite network with 7 interconnected sites\n";
-		$directive .= "- Main site: extrachill.com (music journalism and content)\n";
-		$directive .= "- Community: community.extrachill.com (forums and user hub)\n";
-		$directive .= "- Shop: shop.extrachill.com (e-commerce)\n";
-		$directive .= "- Chat: chat.extrachill.com (this interface)\n";
-		$directive .= "- Artist: artist.extrachill.com (artist profiles)\n";
-		$directive .= "- Events: events.extrachill.com (event calendar)\n\n";
+		$directive .= "- Main site: " . ec_get_site_url( 'main' ) . " (music journalism and content)\n";
+		$directive .= "- Community: " . ec_get_site_url( 'community' ) . " (forums and user hub)\n";
+		$directive .= "- Shop: " . ec_get_site_url( 'shop' ) . " (e-commerce)\n";
+		$directive .= "- Chat: " . ec_get_site_url( 'chat' ) . " (this interface)\n";
+		$directive .= "- Artist: " . ec_get_site_url( 'artist' ) . " (artist profiles)\n";
+		$directive .= "- Events: " . ec_get_site_url( 'events' ) . " (event calendar)\n\n";
 
 		$directive .= "TOOL USAGE:\n";
 		$directive .= "CRITICAL: You have function tools available. When users ask you to find, search, or read content, USE your tools.\n";
@@ -79,7 +79,7 @@ class ChatCoreDirective {
 		$directive .= "Example correct HTML response:\n";
 		$directive .= "<p>I found 3 posts about that topic:</p>\n";
 		$directive .= "<ul>\n";
-		$directive .= "<li><a href=\"https://extrachill.com/post\">Post Title</a> - Brief description</li>\n";
+		$directive .= "<li><a href=\"" . ec_get_site_url( 'main' ) . "/post\">Post Title</a> - Brief description</li>\n";
 		$directive .= "</ul>\n\n";
 
 		return trim( $directive );

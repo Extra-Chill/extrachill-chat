@@ -21,23 +21,22 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 - **Procedural WordPress Pattern**: Uses direct `require_once` includes for all plugin functionality
 - **Site-Activated Plugin**: Activated only on chat.extrachill.com site
 - **Network-Wide Access**: Any logged-in multisite user can access chat interface
-- **Minimal Dependencies**: Only production dependency is extrachill-ai-client (via WordPress filters)
-- **Template Override System**: Replaces theme homepage template via `extrachill_template_homepage` filter
+- **Minimal Dependencies**: Chat invokes the `chubes_ai_request` filter; the provider implementation lives outside this plugin (configured via extrachill-ai-client + ai-http-client).
+- **Homepage Rendering**: Outputs UI via `extrachill_homepage_content` action hook
 
 ### Core Features
 
-#### Authentication System (`inc/core/authentication.php`)
-- **404 for Non-Logged-In Users**: Uses `wp_die()` with 404 status for unauthenticated access
+#### Authentication System
 - **Multisite Native**: Any logged-in user from any site in network can access chat
-- **Early Hook**: `template_redirect` at priority 5 for immediate authentication check
 - **No Domain Detection**: Applies to all pages on the site where plugin is activated
+- **REST API Security**: `is_user_logged_in()` permission check on all REST endpoints
 
 #### Conversation History System (`inc/core/chat-history.php`)
 - **Custom Post Type**: `ec_chat` stores conversation history per user
 - **User Association**: `post_author` field identifies chat owner
 - **Message Storage**: Chat messages stored in `_ec_chat_messages` post meta
 - **Automatic Creation**: Chat post created on first message if doesn't exist
-- **Clear History**: AJAX endpoint allows users to clear their conversation history
+- **Clear History**: REST endpoint allows users to clear their conversation history
 - **Functions**:
   - `ec_chat_get_or_create_chat()` - Get or create chat post for user
   - `ec_chat_get_messages()` - Retrieve all messages from chat
@@ -56,7 +55,7 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 #### Four-Layer AI Directive System (`inc/directives/`)
 **Priority 10: ChatCoreDirective** (`ChatCoreDirective.php`)
 - Agent identity and platform architecture overview
-- 9-site active multisite network description (Blog IDs 1–5, 7–10) with docs at Blog ID 10; horoscope planned for Blog ID 11
+- 9-site active multisite network description (Blog IDs 1–5, 7–11) with docs at Blog ID 10; wire at Blog ID 11; horoscope planned for Blog ID 12
 - HTML formatting requirement (NOT markdown)
 - Tool usage instructions (use tools, don't describe them)
 
@@ -81,25 +80,15 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 - Only active when dm-multisite is network-activated
 - Enables AI to understand network structure and navigate intelligently
 
-#### Template Override System (`inc/core/chat-hooks.php`, `inc/templates/`)
-- **Homepage Override**: Uses `extrachill_template_homepage` filter to replace theme homepage
-- **Full Template**: `inc/templates/chat-interface.php` - complete page template
+#### Homepage Rendering (`inc/core/chat-hooks.php`, `inc/templates/`)
+- **Homepage Content**: Uses `extrachill_homepage_content` action hook to inject chat interface
+- **Full Template**: `inc/templates/chat-interface.php` - complete chat interface
 - **Header Template**: `inc/templates/chat-header.php` - via `extrachill_above_chat` hook
 - **Footer Template**: `inc/templates/chat-footer.php` - via `extrachill_below_chat` hook
 - **Sticky Header Disabled**: `add_filter('extrachill_enable_sticky_header', '__return_false')`
 
-#### AJAX Handlers (`inc/core/ajax-handler.php`)
-- **Action: `ec_chat_message`**
-  - Handles user messages
-  - Creates/loads conversation history
-  - Calls multi-turn conversation loop
-  - Saves complete conversation including tool calls
-  - Returns AI response with tool call metadata
-
-- **Action: `ec_chat_clear_history`**
-  - Clears user's chat history
-  - Requires confirmation in JavaScript
-  - Returns success/error JSON response
+#### REST API Integration (routes live in `extrachill-api`)
+- **POST** `/wp-json/extrachill/v1/chat/message` (route file: `extrachill-api/inc/routes/chat/message.php`)\n  - Handles user messages\n  - Creates/loads conversation history\n  - Calls multi-turn conversation loop\n  - Saves complete conversation including tool calls\n  - Returns AI response + tool call metadata\n\n- **DELETE** `/wp-json/extrachill/v1/chat/history` (route file: `extrachill-api/inc/routes/chat/history.php`)\n  - Clears user's chat history\n  - Requires confirmation in JavaScript\n  - Returns success/error JSON response
 
 #### AI Integration (`inc/core/ai-integration.php`)
 - **Function**: `ec_chat_send_ai_message()`
@@ -117,11 +106,11 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 - **AI Provider**: Hardcoded to OpenAI with GPT-5-mini model
 
 #### Asset Management (`inc/core/assets.php`)
-- **Conditional Loading**: Assets load on all pages (no domain-specific detection)
+- **Conditional Loading**: Assets load on the front page only (`is_front_page()`)
 - **Cache Busting**: `filemtime()` versioning for CSS/JS
-- **jQuery Dependency**: JavaScript requires jQuery
+- **Vanilla JS**: Frontend chat UI is implemented with vanilla JavaScript
 - **Localized Data**:
-  - AJAX URL and nonces
+  - REST base URL and nonce
   - Chat history for initial page load
   - User ID
 
@@ -132,23 +121,19 @@ extrachill-chat/
 ├── extrachill-chat.php          # Main plugin file
 ├── inc/
 │   ├── core/
-│   │   ├── authentication.php   # 404 for logged-out users
 │   │   ├── chat-history.php     # Custom post type and history functions
 │   │   ├── conversation-loop.php # Multi-turn AI tool calling loop
-│   │   ├── ajax-handler.php     # AJAX message and clear history handlers
 │   │   ├── ai-integration.php   # AI API integration with tool support
 │   │   ├── assets.php           # CSS/JS enqueuing
-│   │   └── chat-hooks.php       # Template hooks management
+│   │   ├── chat-hooks.php       # Template hooks management
+│   │   └── breadcrumbs.php      # Breadcrumb navigation
 │   ├── templates/
-│   │   ├── chat-interface.php   # Main chat template
-│   │   ├── chat-header.php      # Chat header template
-│   │   └── chat-footer.php      # Chat footer template
+│   │   └── chat-interface.php   # Main chat template
 │   ├── directives/
 │   │   ├── ChatCoreDirective.php                # Priority 10: Agent identity + HTML requirement
 │   │   ├── ChatSystemPromptDirective.php        # Priority 20: User custom prompt
 │   │   ├── ChatUserContextDirective.php         # Priority 30: User identity and membership
-│   │   ├── MultisiteSiteContextWrapper.php      # Priority 40: Hooks dm-multisite site context
-│   │   └── README.md                            # Directive system documentation
+│   │   └── MultisiteSiteContextWrapper.php      # Priority 40: Hooks dm-multisite site context
 │   ├── admin/
 │   │   └── admin-settings.php   # Site settings page
 │   └── tools/
@@ -164,20 +149,19 @@ extrachill-chat/
 ├── build.sh                     # Production build script
 ├── .buildignore                 # Build exclusions
 ├── composer.json                # Dev dependencies only
-└── CLAUDE.md                    # This documentation
+└── AGENTS.md                    # This documentation
 ```
 
 ## Technical Implementation
 
 ### Conversation History Flow
-1. User sends message via AJAX
-2. Backend calls `ec_chat_get_or_create_chat($user_id)` to get/create chat post
-3. Load last 20 messages from `_ec_chat_messages` post meta
-4. Build messages array including conversation history
+1. User sends message via REST (`POST /wp-json/extrachill/v1/chat/message`)
+2. Route delegates to `ec_chat_send_ai_message()` and history functions in `extrachill-chat`
+3. Backend calls `ec_chat_get_or_create_chat( $user_id )` to get/create chat post
+4. Load last 20 messages from `_ec_chat_messages`
 5. Execute conversation loop with multi-turn tool calling
 6. Save complete conversation (including tool calls and results) to post meta
-7. Return AI response to frontend
-8. JavaScript displays response and tool call metadata
+7. REST route returns JSON (`message`, `tool_calls`)
 
 ### Multi-Turn Conversation Loop Flow
 1. Start with messages array (history + new user message)
@@ -192,7 +176,7 @@ extrachill-chat/
 
 ### Four-Layer Directive System Flow
 ```
-ai_request filter execution order:
+chubes_ai_request filter execution order:
 1. Priority 10: ChatCoreDirective::inject()
    └─> Injects platform architecture + HTML requirement
 2. Priority 20: ChatSystemPromptDirective::inject()
@@ -213,21 +197,21 @@ $request_data = array(
     'model'    => 'gpt-5-mini'  // HARDCODED - not configurable
 );
 
-$response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools );
+$response = apply_filters( 'chubes_ai_request', $request_data, 'openai', null, $tools );
 ```
 
 ### Chat Message Flow
 1. User types message and clicks send or presses Enter
 2. JavaScript: Display user message immediately
-3. JavaScript: Send AJAX POST to `ec_chat_message` action
-4. PHP: Verify nonce and authentication
+3. JavaScript: `fetch()` POST to `rest_url( 'extrachill/v1/chat/message' )`
+4. REST route: `is_user_logged_in()` permission check and message sanitization
 5. PHP: Get/create chat post for user
 6. PHP: Load last 20 messages from history
 7. PHP: Execute multi-turn conversation loop with tools
 8. PHP: Save complete conversation to chat post meta
-9. PHP: Return JSON with AI response and tool call metadata
+9. PHP: Return JSON with AI response + tool call metadata
 10. JavaScript: Display tool calls in info boxes (if any)
-11. JavaScript: Display AI response HTML
+11. JavaScript: Render assistant HTML response
 12. JavaScript: Auto-scroll to bottom
 
 ### CSS Architecture
@@ -240,16 +224,16 @@ $response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools )
 - **Dark Mode**: Automatic via CSS variables (no custom dark mode code needed)
 
 ### JavaScript Architecture
-- **jQuery Module Pattern**: Self-contained chat object
+- **Vanilla JS Module Pattern**: Self-contained chat object
 - **DOM Caching**: All elements cached on init
-- **History Loading**: `loadChatHistory()` displays conversation on page load
+- **History Loading**: `loadChatHistory()` renders localized history on page load
 - **Tool Display**: `addToolCallsInfo()` shows tool calls with friendly names
-- **Event Delegation**: Efficient event binding
+- **Event Binding**: Direct event listeners (no jQuery)
 - **Auto-Resize**: Textarea height adjusts on input
 - **Keyboard Support**: Enter to send, Shift+Enter for new line
-- **Loading States**: Input disabled during AJAX request with typing indicator
-- **Smooth Scrolling**: Animated scroll to bottom on new messages
-- **Clear History**: Confirmation dialog before clearing conversation
+- **Loading States**: Input disabled during REST request with typing indicator
+- **Smooth Scrolling**: Scroll to bottom on new messages
+- **Clear History**: Confirmation dialog before REST DELETE
 
 ## Development Standards
 
@@ -261,8 +245,7 @@ $response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools )
 
 ### Security Implementation
 - **Authentication**: `is_user_logged_in()` check on every request
-- **Nonce Verification**: `check_ajax_referer('ec_chat_nonce')` on AJAX calls
-- **Clear History Nonce**: Separate `ec_chat_clear_nonce` for history clearing
+- **REST Nonce**: Frontend sends `X-WP-Nonce` header using `wp_create_nonce( 'wp_rest' )`
 - **Input Sanitization**: `sanitize_textarea_field()` with `wp_unslash()`
 - **Output Escaping**: `esc_html()`, `esc_attr()`, `esc_url()` throughout
 - **Capability Checks**: `manage_options` for site admin settings
@@ -270,11 +253,11 @@ $response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools )
 
 ### Build System
 - **Shared Build Script**: Symlinked to universal build script at `../../.github/build.sh`
-- **Production Build**: `./build.sh` creates non-versioned ZIP file and clean directory
+- **Production Build**: `./build.sh` creates non-versioned ZIP file only
 - **Composer Integration**: Development dependencies only (PHPUnit, PHPCS)
 - **File Exclusions**: `.buildignore` patterns exclude development files
 - **Structure Validation**: Ensures plugin file exists in build
-- **Output**: `/build/extrachill-chat/` directory and `/build/extrachill-chat.zip` file (non-versioned)
+- **Output**: `/build/extrachill-chat.zip` file (non-versioned)
 
 ## Common Development Commands
 
@@ -297,7 +280,6 @@ composer run test
 ```
 
 ### Build Output
-- **Clean Directory**: `/build/extrachill-chat/` - Production-ready plugin directory
 - **Production ZIP**: `/build/extrachill-chat.zip` - Non-versioned deployment package
 - **Activation**: Site-activate on chat.extrachill.com only
 - **File Exclusions**: Development files, vendor/, .git/, build tools excluded via `.buildignore`
@@ -323,15 +305,15 @@ composer run test
 ### With extrachill-ai-client
 **AI Request** (in conversation-loop.php):
 ```php
-$response = apply_filters( 'ai_request', $request_data, 'openai', null, $tools );
+$response = apply_filters( 'chubes_ai_request', $request_data, 'openai', null, $tools );
 ```
 
 **Note**: Provider and model are hardcoded to OpenAI and GPT-5-mini respectively. AI client handles API key management and HTTP communication.
 
 ### With extrachill Theme
-**Template Override** (in main plugin file):
+**Homepage Content** (in main plugin file):
 ```php
-add_filter( 'extrachill_template_homepage', 'ec_chat_override_homepage_template' );
+add_action( 'extrachill_homepage_content', 'ec_chat_render_homepage' );
 ```
 
 **Disable Sticky Header** (in main plugin file):
@@ -485,7 +467,7 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 ### Implemented Features
 - Multi-turn conversation loop with chained tool calling
 - Conversation history system via custom post type
-- Clear history functionality with AJAX endpoint
+- Clear history functionality via REST endpoint
 - Four-layer AI directive system (core, custom, user context, site context)
 - Multisite site context directive (network topology and site metadata)
 - Template override system via theme filters
@@ -528,21 +510,21 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 - Review error_log for PHP errors
 - Check conversation loop max iterations not exceeded
 
-### 404 Error When Logged In
-- Verify plugin is activated on correct site
-- Check authentication.php is loaded
-- Review template_redirect hook execution
+### Chat Interface Not Loading
+- Verify plugin is activated on correct site (chat.extrachill.com)
+- Check extrachill theme is active
+- Review browser console for asset loading errors
 
 ### Messages Not Sending
 - Check browser console for JavaScript errors
-- Verify AJAX URL and nonce are correct
+- Verify REST URL and `X-WP-Nonce` header are present
 - Check network tab for failed requests
 - Review PHP error_log for backend errors
 
 ### Clear History Not Working
-- Verify separate clear history nonce is generated
+- Verify REST `DELETE /wp-json/extrachill/v1/chat/history` request includes `X-WP-Nonce`
 - Check user owns the chat post being cleared
-- Review AJAX response in browser console
+- Review REST response in browser console
 
 ### Tool Calls Not Executing
 - Check `$ec_chat_tools` global is initialized
