@@ -55,7 +55,7 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 #### Four-Layer AI Directive System (`inc/directives/`)
 **Priority 10: ChatCoreDirective** (`ChatCoreDirective.php`)
 - Agent identity and platform architecture overview
-- 9-site active multisite network description (Blog IDs 1–5, 7–11) with docs at Blog ID 10; wire at Blog ID 11; horoscope planned for Blog ID 12
+- 11-site active multisite network description (Blog IDs 1–5, 7–12) with docs at Blog ID 10; wire at Blog ID 11; horoscope at Blog ID 12
 - HTML formatting requirement (NOT markdown)
 - Tool usage instructions (use tools, don't describe them)
 
@@ -74,7 +74,7 @@ AI chatbot plugin providing ChatGPT-style interface with multi-turn conversation
 **Priority 40: MultisiteSiteContextDirective** (`MultisiteSiteContextWrapper.php`)
 - Provided by dm-multisite plugin, hooked via wrapper pattern
 - Current site metadata (blog ID, name, URL)
-- All 9 Extra Chill network sites with complete metadata
+- All 11 Extra Chill network sites with complete metadata
 - Post types and taxonomies available on each site
 - JSON-formatted network topology
 - Only active when dm-multisite is network-activated
@@ -149,7 +149,7 @@ extrachill-chat/
 ├── build.sh                     # Production build script
 ├── .buildignore                 # Build exclusions
 ├── composer.json                # Dev dependencies only
-└── AGENTS.md                    # This documentation
+└── CLAUDE.md                    # This documentation
 ```
 
 ## Technical Implementation
@@ -325,12 +325,12 @@ add_filter( 'extrachill_enable_sticky_header', '__return_false' );
 - `extrachill_above_chat` - Renders chat header
 - `extrachill_below_chat` - Renders chat footer
 
-## Installation & Setup
+## Notes
 
-### 1. Prerequisites
-- WordPress multisite network installed
-- extrachill-ai-client plugin network-activated with OpenAI API key configured
-- extrachill theme active on chat site
+- Requires a WordPress multisite network; the plugin is site-activated on chat.extrachill.com.
+- Provider/model selection is not configurable; the conversation loop hardcodes `gpt-5-mini` and routes the request through the `chubes_ai_request` filter.
+- The only admin setting is the optional system prompt (`extrachill_chat_system_prompt`).
+
 
 ### 2. Create Chat Site
 - Network Admin → Sites → Add New
@@ -476,7 +476,8 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 - HTML-formatted responses (not markdown)
 - Network-wide multisite authentication
 - User context injection (roles, team status, artist profiles)
-- Network topology context (all 8 sites, post types, taxonomies)
+- Network topology context (all 11 sites, post types, taxonomies)
+
 
 ### Hardcoded Limitations
 - **AI Provider**: OpenAI only (hardcoded in conversation-loop.php)
@@ -495,42 +496,6 @@ function my_cross_site_tool( $parameters, $tool_def ) {
 - Voice input capabilities
 - Conversation branching or multiple chats
 - Export conversation functionality
-
-## Troubleshooting
-
-### Chat Interface Doesn't Render
-- Verify plugin is site-activated on chat.extrachill.com
-- Check user is logged in to any multisite site
-- Verify extrachill theme is active
-- Check template override filter is registered
-
-### AI Doesn't Respond
-- Verify extrachill-ai-client is network-activated
-- Check OpenAI API key is configured in AI Client settings
-- Review error_log for PHP errors
-- Check conversation loop max iterations not exceeded
-
-### Chat Interface Not Loading
-- Verify plugin is activated on correct site (chat.extrachill.com)
-- Check extrachill theme is active
-- Review browser console for asset loading errors
-
-### Messages Not Sending
-- Check browser console for JavaScript errors
-- Verify REST URL and `X-WP-Nonce` header are present
-- Check network tab for failed requests
-- Review PHP error_log for backend errors
-
-### Clear History Not Working
-- Verify REST `DELETE /wp-json/extrachill/v1/chat/history` request includes `X-WP-Nonce`
-- Check user owns the chat post being cleared
-- Review REST response in browser console
-
-### Tool Calls Not Executing
-- Check `$ec_chat_tools` global is initialized
-- Review conversation loop iteration count
-- Check tool parameters match expected format
-- Verify required plugin dependencies are active (extrachill-users, extrachill-search)
 
 ## User Info
 

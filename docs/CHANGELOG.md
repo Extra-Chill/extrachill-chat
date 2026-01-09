@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-01-09
+
+### Added
+- Registered a Gutenberg block (`extrachill/chat`) from `build/blocks/chat` during `init`
+
+### Changed
+- Updated chat homepage rendering to include `inc/templates/chat-homepage.php`
+
+### Fixed
+- Persisted final assistant message in the conversation loop when the AI returns text (ensures the last assistant response is stored in history)
+- Updated breadcrumb root links to use dynamic site URLs via `ec_get_site_url()`
+- Fixed the “Back to Chat” label output to render the actual left-arrow character
+
 ## [0.2.1] - 2025-12-08
 
 ### Changed

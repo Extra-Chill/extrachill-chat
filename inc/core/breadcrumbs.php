@@ -69,7 +69,7 @@ function ec_chat_back_to_home_label( $label, $url ) {
 		return $label;
 	}
 
-	return '�0 Back to Chat';
+	return '← Back to Chat';
 }
 add_filter( 'extrachill_back_to_home_label', 'ec_chat_back_to_home_label', 10, 2 );
 

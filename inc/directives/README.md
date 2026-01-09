@@ -28,7 +28,7 @@ When the dm-multisite plugin is active, extrachill-chat conditionally hooks `DMM
 
 This provides the AI with comprehensive network context:
 - Current site context (site name, URL, blog ID)
-- Network topology information (all 10 active sites in the Extra Chill network; horoscope planned for Blog ID 12)
+- Network topology information (all 11 active sites in the Extra Chill network)
 - Available post types and taxonomies per site
 - Cross-site data access patterns via JSON-formatted metadata
 
@@ -60,7 +60,7 @@ Priority 30: ChatUserContextDirective injects
     ↓
 Priority 40: MultisiteSiteContextDirective injects (if dm-multisite active)
     - Current site: chat.extrachill.com
-    - All 9 network sites with URLs and metadata
+    - All 11 network sites with URLs and metadata
     - Post types and taxonomies per site
     - JSON-formatted network topology
     ↓
@@ -147,7 +147,7 @@ The JavaScript simply uses `.html()` to render the AI's response directly, trust
 ### MultisiteSiteContextDirective (Priority 40)
 - Provided by dm-multisite plugin, hooked via `MultisiteSiteContextWrapper.php`
 - Current site metadata (blog ID, name, URL)
-- All 9 Extra Chill network sites with complete metadata
+- All 11 Extra Chill network sites with complete metadata
 - Post types and taxonomies available on each site
 - JSON-formatted network topology for structured AI understanding
 - Only active when dm-multisite is network-activated

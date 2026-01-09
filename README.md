@@ -83,7 +83,7 @@ Note: The intermediate `/build/extrachill-chat/` directory is temporary and remo
 
 ## Documentation
 
-- **AGENTS.md** - Comprehensive technical documentation for AI agents and developers
+- **CLAUDE.md** - Comprehensive technical documentation for AI agents and developers
 - **README.md** - This file (GitHub overview)
 
 ## License

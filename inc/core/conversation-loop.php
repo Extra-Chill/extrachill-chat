@@ -53,6 +53,12 @@ function ec_chat_conversation_loop( $messages, $tools = array(), $max_iterations
 				return new WP_Error( 'invalid_response', 'AI response missing content' );
 			}
 
+			// Add final assistant message to messages array for persistence
+			$messages[] = array(
+				'role'    => 'assistant',
+				'content' => $response['data']['content'],
+			);
+
 			return array(
 				'content'    => $response['data']['content'],
 				'tool_calls' => $all_tool_calls,

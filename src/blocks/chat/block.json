@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "extrachill/chat",
+	"version": "0.3.1",
+	"title": "AI Chat",
+	"category": "widgets",
+	"icon": "format-chat",
+	"description": "AI-powered chat assistant for Extra Chill.",
+	"textdomain": "extrachill-chat",
+	"attributes": {},
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"reusable": false,
+		"inserter": true
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScript": "file:./view.js"
+}
